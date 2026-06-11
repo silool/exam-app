@@ -1425,16 +1425,20 @@ function parseJsonFile(file) {
   });
 }
 
-function parseExcelBank(wb, filename) {
-  const ws = wb.Sheets[wb.SheetNames[0]];
-  const rows = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' });
-  if (rows.length < 2) throw new Error('空文件');
+function detectTypeFromSheet(sheetName) {
+  const n = sheetName.toLowerCase();
+  if (n.includes('多选') || n.includes('multiple')) return 'multiple';
+  if (n.includes('判断') || n.includes('是非') || n.includes('truefalse') || n.includes('tf') || n.includes('对错')) return 'truefalse';
+  if (n.includes('填空') || n.includes('fill')) return 'fill';
+  return 'single';
+}
 
-  // Detect header
+function parseSheetQuestions(rows, defaultType) {
+  if (rows.length < 2) return [];
+
   const header = rows[0].map(h => String(h).trim());
   let qCol = 0, optStart = 1, ansCol = header.length - 1;
 
-  // Auto-detect column positions
   for (let i = 0; i < header.length; i++) {
     const h = header[i].toLowerCase();
     if (h.includes('题目') || h.includes('问题') || h === 'question') qCol = i;
@@ -1442,7 +1446,6 @@ function parseExcelBank(wb, filename) {
     if (h === 'a' || h === '选项a' || h === '选项1') optStart = i;
   }
 
-  // Find where options end (before answer column or end)
   let optEnd = ansCol;
   if (ansCol <= optStart) optEnd = header.length;
 
@@ -1459,21 +1462,34 @@ function parseExcelBank(wb, filename) {
     }
 
     const ansRaw = String(row[ansCol] || '').trim();
-    let type = 'single';
+    let type = defaultType;
     let answer = null;
 
-    // Determine type and answer
-    if (options.length === 0) {
-      // No options → fill-in-the-blank
+    if (type === 'fill' || options.length === 0) {
       type = 'fill';
       answer = ansRaw;
-    } else if (options.length === 2 && (options[0] === '正确' || options[0] === '对' || options[0] === 'T' || options[0] === 'True')) {
-      // Likely true/false
-      type = 'truefalse';
+    } else if (type === 'truefalse') {
       const ans = ansRaw.toUpperCase();
-      answer = ans === '正确' || ans === '对' || ans === 'T' || ans === 'TRUE' || ans === 'A' || ans === '✓';
+      answer = ans === '正确' || ans === '对' || ans === 'T' || ans === 'TRUE' || ans === '✓' || ans === 'A';
+    } else if (type === 'multiple') {
+      // Parse multi-letter answers: "ABD" or "A,B,D" or "1,3,4"
+      const cleaned = ansRaw.toUpperCase().replace(/[,，、\s]+/g, '');
+      const indices = [];
+      for (const ch of cleaned) {
+        const li = 'ABCDEFGH'.indexOf(ch);
+        if (li >= 0 && li < options.length) indices.push(li);
+      }
+      if (indices.length === 0) {
+        // Try numeric: "1,3,4"
+        const nums = ansRaw.split(/[,，、\s]+/);
+        nums.forEach(n => {
+          const ni = parseInt(n);
+          if (!isNaN(ni) && ni >= 1 && ni <= options.length) indices.push(ni - 1);
+        });
+      }
+      answer = indices.length > 0 ? indices : [0];
     } else {
-      // Single choice: answer is letter (A/B/C/D) or index
+      // single
       const letterIdx = 'ABCDEFGH'.indexOf(ansRaw.toUpperCase());
       if (letterIdx >= 0) {
         answer = letterIdx;
@@ -1485,11 +1501,28 @@ function parseExcelBank(wb, filename) {
 
     questions.push({ type, question: qText, options, answer, explanation: '' });
   }
+  return questions;
+}
 
-  if (questions.length === 0) throw new Error('未识别到题目');
+function parseExcelBank(wb, filename) {
+  const allQuestions = [];
+  let summary = [];
+
+  for (const sheetName of wb.SheetNames) {
+    const ws = wb.Sheets[sheetName];
+    const rows = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' });
+    const defaultType = detectTypeFromSheet(sheetName);
+    const qs = parseSheetQuestions(rows, defaultType);
+    if (qs.length > 0) {
+      allQuestions.push(...qs);
+      summary.push(`${sheetName}(${TYPE_LABELS[defaultType]}×${qs.length})`);
+    }
+  }
+
+  if (allQuestions.length === 0) throw new Error('未识别到题目');
 
   const name = filename.replace(/\.(xlsx?|xls)$/i, '');
-  return { name, description: `从 Excel 导入，共 ${questions.length} 题`, questions };
+  return { name, description: `从 Excel 导入，${summary.join(' + ')}，共 ${allQuestions.length} 题`, questions: allQuestions };
 }
 
 // Sample import
