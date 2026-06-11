@@ -492,7 +492,7 @@
         <h3 style="font-size:18px;font-weight:700;margin:0;">📋 考试记录</h3>
         <div class="records-actions">
           <button class="btn btn-sm btn-outline" id="btn-export-records">导出 CSV</button>
-          <button class="btn btn-sm btn-danger" id="btn-clear-records">清空记录</button>
+
         </div>
       </div>
       <div id="records-list"></div>
@@ -962,6 +962,7 @@ function startExam() {
 
   examRegistration.department = dept;
   examRegistration.name = uname;
+  examRegistration.startTime = new Date().toISOString();
 
   const banks = loadBanks();
   const bank = banks[examRegistration.bankIndex];
@@ -1073,11 +1074,18 @@ function showResult() {
 
   // Save exam record
   const now = new Date();
+  const endTime = now.toISOString();
   const dateStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+  const startStr = examRegistration && examRegistration.startTime
+    ? (() => { const s = new Date(examRegistration.startTime); return `${String(s.getHours()).padStart(2,'0')}:${String(s.getMinutes()).padStart(2,'0')}`; })()
+    : '';
+  const endStr = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+  const timeRange = startStr ? `${startStr} - ${endStr}` : endStr;
   const records = loadRecords();
   records.push({
     id: Date.now(),
     date: dateStr,
+    timeRange: timeRange,
     department: examRegistration ? examRegistration.department : '',
     name: examRegistration ? examRegistration.name : '',
     bankName: examRegistration ? examRegistration.bankName : '',
@@ -1262,7 +1270,7 @@ function showRecords() {
             <span>📚 ${escapeHtml(r.bankName)}</span>
             <span>✅ ${r.correct}/${r.total} 正确</span>
           </div>
-          <div class="record-date">🕐 ${r.date}${hasDetail ? ' · 点击查看答题详情' : ''}</div>
+          <div class="record-date">🕐 ${r.date}${r.timeRange ? '  |  ⏱ ' + r.timeRange : ''}${hasDetail ? ' · 点击查看答题详情' : ''}</div>
         </div>
       `;
     }).join('');
@@ -1551,7 +1559,6 @@ document.getElementById('btn-back-setup').addEventListener('click', () => { show
 document.getElementById('btn-records').addEventListener('click', showRecords);
 document.getElementById('home-records-card').addEventListener('click', showRecords);
 document.getElementById('btn-export-records').addEventListener('click', exportRecordsCSV);
-document.getElementById('btn-clear-records').addEventListener('click', clearRecords);
 
 // ===== Sample Question Bank =====
 function getSampleBank() {
