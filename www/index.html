@@ -1,0 +1,1431 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#6366f1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>随考 - 考试软件</title>
+  <link rel="manifest" href="/manifest.json">
+  <style>
+    /* ===== Reset & Variables ===== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --c-primary: #6366f1;
+      --c-primary-dark: #4f46e5;
+      --c-primary-light: #eef2ff;
+      --c-success: #10b981;
+      --c-success-light: #ecfdf5;
+      --c-error: #ef4444;
+      --c-error-light: #fef2f2;
+      --c-warning: #f59e0b;
+      --c-warning-light: #fffbeb;
+      --c-bg: #f1f5f9;
+      --c-surface: #ffffff;
+      --c-border: #e2e8f0;
+      --c-text: #1e293b;
+      --c-text-secondary: #64748b;
+      --c-text-muted: #94a3b8;
+      --radius: 14px;
+      --radius-sm: 10px;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,.05);
+      --shadow: 0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.06);
+      --shadow-md: 0 4px 6px rgba(0,0,0,.07), 0 2px 4px rgba(0,0,0,.06);
+      --shadow-lg: 0 10px 15px rgba(0,0,0,.1), 0 4px 6px rgba(0,0,0,.05);
+      --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+      --safe-bottom: env(safe-area-inset-bottom, 16px);
+    }
+    html, body { height: 100%; font-family: var(--font); background: var(--c-bg); color: var(--c-text); -webkit-tap-highlight-color: transparent; overflow: hidden; }
+    body { display: flex; justify-content: center; align-items: center; }
+    button { font-family: inherit; cursor: pointer; border: none; outline: none; -webkit-tap-highlight-color: transparent; }
+    input, textarea { font-family: inherit; outline: none; }
+
+    /* ===== App Shell ===== */
+    #app {
+      width: 100%; max-width: 480px; height: 100%; display: flex; flex-direction: column;
+      background: var(--c-bg); position: relative; overflow: hidden;
+      box-shadow: var(--shadow-lg);
+    }
+    @media (min-width: 481px) {
+      #app { height: min(100%, 900px); border-radius: 20px; margin: 16px; }
+    }
+
+    /* ===== Header ===== */
+    .app-header {
+      flex-shrink: 0; display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 20px; background: var(--c-surface); border-bottom: 1px solid var(--c-border);
+      z-index: 10;
+    }
+    .app-header h1 { font-size: 20px; font-weight: 700; color: var(--c-primary); letter-spacing: -.3px; }
+    .app-header .header-actions { display: flex; gap: 8px; }
+    .btn-icon {
+      width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      background: var(--c-bg); color: var(--c-text-secondary); font-size: 18px; transition: all .15s;
+    }
+    .btn-icon:active { background: var(--c-primary-light); color: var(--c-primary); transform: scale(.93); }
+
+    /* ===== Main Content ===== */
+    .app-main { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 16px 16px calc(16px + var(--safe-bottom)); -webkit-overflow-scrolling: touch; }
+    .screen { display: none; flex-direction: column; gap: 16px; animation: fadeSlideIn .25s ease; }
+    .screen.active { display: flex; }
+    @keyframes fadeSlideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* ===== Cards ===== */
+    .card {
+      background: var(--c-surface); border-radius: var(--radius); padding: 18px;
+      box-shadow: var(--shadow-sm); border: 1px solid var(--c-border);
+    }
+    .card-header { font-size: 15px; font-weight: 600; color: var(--c-text); margin-bottom: 12px; }
+
+    /* ===== Buttons ===== */
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+      padding: 12px 24px; border-radius: 25px; font-size: 15px; font-weight: 600;
+      transition: all .15s; min-height: 48px; white-space: nowrap;
+    }
+    .btn:active { transform: scale(.96); }
+    .btn-primary { background: var(--c-primary); color: #fff; box-shadow: 0 2px 8px rgba(99,102,241,.4); }
+    .btn-primary:active { background: var(--c-primary-dark); }
+    .btn-outline { background: transparent; color: var(--c-primary); border: 2px solid var(--c-primary); }
+    .btn-outline:active { background: var(--c-primary-light); }
+    .btn-success { background: var(--c-success); color: #fff; }
+    .btn-ghost { background: transparent; color: var(--c-text-secondary); }
+    .btn-block { width: 100%; justify-content: center; }
+    .btn-sm { padding: 8px 16px; font-size: 13px; min-height: 36px; border-radius: 20px; }
+    .btn-danger { background: var(--c-error); color: #fff; }
+
+    /* ===== Empty State ===== */
+    .empty-state {
+      text-align: center; padding: 48px 24px; color: var(--c-text-secondary);
+    }
+    .empty-state .empty-icon { font-size: 64px; margin-bottom: 16px; display: block; }
+    .empty-state h3 { font-size: 18px; color: var(--c-text); margin-bottom: 8px; }
+    .empty-state p { font-size: 14px; line-height: 1.6; margin-bottom: 20px; }
+
+    /* ===== Bank List ===== */
+    .bank-item {
+      display: flex; align-items: center; gap: 14px; padding: 16px; background: var(--c-surface);
+      border-radius: var(--radius); box-shadow: var(--shadow-sm); border: 1px solid var(--c-border);
+      transition: all .15s; cursor: pointer;
+    }
+    .bank-item:active { transform: scale(.98); background: var(--c-bg); }
+    .bank-item .bank-icon {
+      width: 46px; height: 46px; border-radius: 12px; background: var(--c-primary-light);
+      display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0;
+    }
+    .bank-item .bank-info { flex: 1; min-width: 0; }
+    .bank-item .bank-name { font-size: 15px; font-weight: 600; color: var(--c-text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .bank-item .bank-meta { font-size: 12px; color: var(--c-text-secondary); margin-top: 2px; }
+    .bank-item .bank-actions { display: flex; gap: 4px; flex-shrink: 0; }
+
+    /* ===== Import Section ===== */
+    .import-tabs { display: flex; gap: 0; margin-bottom: 0; }
+    .import-tab {
+      flex: 1; padding: 10px; text-align: center; font-size: 14px; font-weight: 500;
+      background: var(--c-bg); color: var(--c-text-secondary); border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+      transition: all .15s; border: 1px solid transparent;
+    }
+    .import-tab.active { background: var(--c-surface); color: var(--c-primary); font-weight: 600; border-color: var(--c-border); border-bottom-color: transparent; }
+    .import-panel { display: none; }
+    .import-panel.active { display: block; }
+
+    textarea.json-input {
+      width: 100%; min-height: 180px; padding: 14px; border: 1px solid var(--c-border);
+      border-radius: var(--radius-sm); font-size: 13px; font-family: "SF Mono", "Fira Code", "Consolas", monospace;
+      resize: vertical; line-height: 1.5; background: #fafbfc;
+    }
+    textarea.json-input:focus { border-color: var(--c-primary); box-shadow: 0 0 0 3px var(--c-primary-light); }
+
+    .file-upload-area {
+      border: 2px dashed var(--c-border); border-radius: var(--radius); padding: 32px;
+      text-align: center; color: var(--c-text-secondary); transition: all .2s; cursor: pointer;
+    }
+    .file-upload-area:hover, .file-upload-area.dragover { border-color: var(--c-primary); background: var(--c-primary-light); }
+    .file-upload-area .upload-icon { font-size: 40px; display: block; margin-bottom: 8px; }
+    .file-upload-area p { font-size: 14px; }
+    .file-upload-area input[type=file] { display: none; }
+
+    /* ===== Setup Screen ===== */
+    .setup-form { display: flex; flex-direction: column; gap: 16px; }
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-group label { font-size: 13px; font-weight: 600; color: var(--c-text-secondary); text-transform: uppercase; letter-spacing: .5px; }
+    .form-group select, .form-group input[type=number] {
+      padding: 12px 14px; border: 1px solid var(--c-border); border-radius: var(--radius-sm);
+      font-size: 15px; background: var(--c-surface); color: var(--c-text); appearance: none;
+      -webkit-appearance: none;
+    }
+    .form-group select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M6 8L1 3h10z' fill='%2364748b'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; }
+    .form-group input[type=number] { width: 100%; }
+    .form-group input:focus, .form-group select:focus { border-color: var(--c-primary); box-shadow: 0 0 0 3px var(--c-primary-light); }
+
+    .toggle-row { display: flex; align-items: center; justify-content: space-between; padding: 4px 0; }
+    .toggle-row span { font-size: 14px; color: var(--c-text); }
+    .toggle {
+      width: 48px; height: 28px; border-radius: 14px; background: var(--c-border); position: relative;
+      transition: background .2s; cursor: pointer; flex-shrink: 0;
+    }
+    .toggle.on { background: var(--c-primary); }
+    .toggle::after {
+      content: ""; width: 22px; height: 22px; border-radius: 50%; background: #fff;
+      position: absolute; top: 3px; left: 3px; transition: transform .2s; box-shadow: var(--shadow-sm);
+    }
+    .toggle.on::after { transform: translateX(20px); }
+
+    /* ===== Quiz Screen ===== */
+    .quiz-top { display: flex; flex-direction: column; gap: 12px; }
+    .quiz-meta { display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: var(--c-text-secondary); }
+    .quiz-meta .q-num { font-weight: 600; color: var(--c-primary); }
+    .progress-bar {
+      height: 6px; background: var(--c-border); border-radius: 3px; overflow: hidden;
+    }
+    .progress-bar .progress-fill { height: 100%; background: var(--c-primary); border-radius: 3px; transition: width .3s ease; }
+
+    .quiz-question-card { background: var(--c-surface); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow-sm); border: 1px solid var(--c-border); }
+    .question-type-badge {
+      display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 600;
+      margin-bottom: 12px; letter-spacing: .3px;
+    }
+    .badge-single { background: #dbeafe; color: #2563eb; }
+    .badge-multiple { background: #fef3c7; color: #d97706; }
+    .badge-truefalse { background: #ede9fe; color: #7c3aed; }
+    .badge-fill { background: #d1fae5; color: #059669; }
+    .question-text { font-size: 16px; font-weight: 500; line-height: 1.6; color: var(--c-text); }
+
+    .quiz-options { display: flex; flex-direction: column; gap: 10px; margin-top: 16px; }
+    .option-btn {
+      display: flex; align-items: center; gap: 12px; padding: 14px 16px; border: 2px solid var(--c-border);
+      border-radius: var(--radius-sm); font-size: 15px; background: var(--c-surface); color: var(--c-text);
+      text-align: left; transition: all .15s; cursor: pointer; line-height: 1.4;
+    }
+    .option-btn:active { transform: scale(.98); }
+    .option-btn.selected { border-color: var(--c-primary); background: var(--c-primary-light); }
+    .option-btn.selected .option-letter { background: var(--c-primary); color: #fff; }
+    .option-letter {
+      width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 14px; flex-shrink: 0; background: var(--c-bg); color: var(--c-text-secondary);
+      transition: all .15s;
+    }
+    .option-text { flex: 1; }
+
+    .fill-input {
+      width: 100%; padding: 14px 16px; border: 2px solid var(--c-border); border-radius: var(--radius-sm);
+      font-size: 16px; margin-top: 16px; transition: all .15s;
+    }
+    .fill-input:focus { border-color: var(--c-primary); box-shadow: 0 0 0 3px var(--c-primary-light); }
+
+    /* ===== Registration ===== */
+    .form-group input[type=text] {
+      padding: 12px 14px; border: 1px solid var(--c-border); border-radius: var(--radius-sm);
+      font-size: 15px; background: var(--c-surface); color: var(--c-text);
+    }
+    .form-group input[type=text]:focus { border-color: var(--c-primary); box-shadow: 0 0 0 3px var(--c-primary-light); }
+
+    /* ===== Records ===== */
+    .record-item {
+      background: var(--c-surface); border-radius: var(--radius); padding: 16px;
+      box-shadow: var(--shadow-sm); border: 1px solid var(--c-border);
+      display: flex; flex-direction: column; gap: 8px;
+    }
+    .record-header { display: flex; justify-content: space-between; align-items: center; }
+    .record-header .record-name { font-size: 16px; font-weight: 600; color: var(--c-text); }
+    .record-header .record-score { font-size: 20px; font-weight: 700; }
+    .record-meta { font-size: 13px; color: var(--c-text-secondary); display: flex; flex-wrap: wrap; gap: 6px; }
+    .record-meta span { background: var(--c-bg); padding: 3px 10px; border-radius: 12px; }
+    .record-date { font-size: 12px; color: var(--c-text-muted); }
+    .records-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+    .quiz-nav { display: flex; gap: 10px; margin-top: 8px; }
+    .quiz-nav .btn { flex: 1; }
+
+    /* ===== Result Screen ===== */
+    .result-card { text-align: center; padding: 28px 20px; }
+    .score-circle {
+      width: 140px; height: 140px; margin: 0 auto 20px; position: relative;
+    }
+    .score-circle svg { transform: rotate(-90deg); }
+    .score-circle .bg { fill: none; stroke: var(--c-border); stroke-width: 8; }
+    .score-circle .fg { fill: none; stroke-width: 8; stroke-linecap: round; transition: stroke-dashoffset .8s ease; }
+    .score-circle .score-text {
+      position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    }
+    .score-circle .score-num { font-size: 36px; font-weight: 800; color: var(--c-text); line-height: 1; }
+    .score-circle .score-label { font-size: 12px; color: var(--c-text-secondary); margin-top: 4px; }
+
+    .result-stats { display: flex; gap: 12px; margin-top: 8px; }
+    .stat-item {
+      flex: 1; text-align: center; padding: 14px 8px; border-radius: var(--radius-sm);
+      background: var(--c-bg);
+    }
+    .stat-item .stat-num { font-size: 22px; font-weight: 700; }
+    .stat-item .stat-label { font-size: 11px; color: var(--c-text-secondary); margin-top: 2px; }
+    .stat-correct .stat-num { color: var(--c-success); }
+    .stat-wrong .stat-num { color: var(--c-error); }
+    .stat-total .stat-num { color: var(--c-text); }
+
+    .result-actions { display: flex; flex-direction: column; gap: 10px; margin-top: 8px; }
+
+    /* ===== Review Screen ===== */
+    .review-item {
+      background: var(--c-surface); border-radius: var(--radius); padding: 18px;
+      box-shadow: var(--shadow-sm); border: 1px solid var(--c-border);
+    }
+    .review-item.correct { border-left: 4px solid var(--c-success); }
+    .review-item.wrong { border-left: 4px solid var(--c-error); }
+    .review-q { font-size: 15px; font-weight: 500; margin-bottom: 10px; line-height: 1.5; }
+    .review-answer { font-size: 13px; margin-top: 6px; }
+    .review-answer .label { font-weight: 600; margin-right: 4px; }
+    .review-answer.correct-ans { color: var(--c-success); }
+    .review-answer.user-ans { color: var(--c-error); }
+    .review-explanation {
+      margin-top: 10px; padding: 10px 14px; background: var(--c-bg); border-radius: var(--radius-sm);
+      font-size: 13px; color: var(--c-text-secondary); line-height: 1.5;
+    }
+
+    /* ===== Toast ===== */
+    .toast-container {
+      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); z-index: 999;
+      display: flex; flex-direction: column; gap: 8px; pointer-events: none;
+    }
+    .toast {
+      padding: 12px 22px; border-radius: 24px; font-size: 14px; font-weight: 500; color: #fff;
+      background: #1e293b; box-shadow: var(--shadow-lg); animation: toastIn .3s ease;
+      text-align: center; max-width: 320px;
+    }
+    .toast.error { background: var(--c-error); }
+    .toast.success { background: var(--c-success); }
+    @keyframes toastIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* ===== Modal ===== */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 100;
+      display: flex; align-items: flex-end; justify-content: center;
+      animation: fadeIn .2s ease;
+    }
+    .modal-overlay.hidden { display: none; }
+    .modal-sheet {
+      width: 100%; max-width: 480px; background: var(--c-surface); border-radius: 20px 20px 0 0;
+      padding: 20px 20px calc(20px + var(--safe-bottom)); max-height: 85vh; overflow-y: auto;
+      animation: slideUp .25s ease;
+    }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+
+    .modal-handle { width: 36px; height: 4px; background: var(--c-border); border-radius: 2px; margin: 0 auto 16px; }
+    .modal-title { font-size: 18px; font-weight: 700; margin-bottom: 16px; }
+    .modal-actions { display: flex; gap: 10px; margin-top: 20px; }
+    .modal-actions .btn { flex: 1; }
+
+    /* ===== Utilities ===== */
+    .text-center { text-align: center; }
+    .text-muted { color: var(--c-text-secondary); }
+    .mt-8 { margin-top: 8px; }
+    .mt-12 { margin-top: 12px; }
+    .mt-16 { margin-top: 16px; }
+    .gap-8 { gap: 8px; }
+    .gap-12 { gap: 12px; }
+    .flex-row { display: flex; }
+    .hidden { display: none !important; }
+
+    /* ===== Scrollbar ===== */
+    .app-main::-webkit-scrollbar { width: 3px; }
+    .app-main::-webkit-scrollbar-track { background: transparent; }
+    .app-main::-webkit-scrollbar-thumb { background: var(--c-border); border-radius: 3px; }
+
+    /* ===== Hint ===== */
+    .hint { font-size: 12px; color: var(--c-text-muted); margin-top: 4px; }
+  </style>
+</head>
+<body>
+
+<div id="app">
+  <!-- Header -->
+  <header class="app-header">
+    <h1>📝 随考</h1>
+    <div class="header-actions">
+      <button class="btn-icon" id="btn-records" title="考试记录">📋</button>
+      <button class="btn-icon" id="btn-import" title="导入题库">＋</button>
+      <button class="btn-icon" id="btn-home" title="首页">🏠</button>
+    </div>
+  </header>
+
+  <!-- Main -->
+  <main class="app-main">
+    <!-- Home Screen -->
+    <div class="screen active" id="screen-home">
+      <div class="card" id="home-records-card" style="display:flex;align-items:center;gap:14px;padding:14px 18px;cursor:pointer;">
+        <span style="font-size:28px;">📋</span>
+        <div style="flex:1;">
+          <div style="font-size:15px;font-weight:600;">考试记录</div>
+          <div style="font-size:12px;color:var(--c-text-secondary);">查看历史考试成绩</div>
+        </div>
+        <span style="color:var(--c-text-muted);">→</span>
+      </div>
+      <div id="bank-list"></div>
+      <div id="empty-banks" class="empty-state hidden">
+        <span class="empty-icon">📚</span>
+        <h3>还没有题库</h3>
+        <p>点击右上角 ＋ 按钮<br>导入你的第一个题库吧</p>
+        <button class="btn btn-primary" id="btn-empty-import">导入题库</button>
+      </div>
+    </div>
+
+    <!-- Setup Screen -->
+    <div class="screen" id="screen-setup">
+      <div class="card setup-form">
+        <div class="card-header">⚙️ 考试设置</div>
+        <div class="form-group">
+          <label>选择题库</label>
+          <select id="setup-bank-select"></select>
+        </div>
+        <div class="form-group">
+          <label>题目数量</label>
+          <input type="number" id="setup-count" min="1" value="10" placeholder="输入题目数量">
+          <span class="hint" id="setup-count-hint"></span>
+        </div>
+        <div class="toggle-row">
+          <span>随机打乱题目顺序</span>
+          <div class="toggle on" id="setup-shuffle"></div>
+        </div>
+        <button class="btn btn-primary btn-block mt-8" id="btn-start-quiz">开始考试</button>
+      </div>
+    </div>
+
+    <!-- Register Screen -->
+    <div class="screen" id="screen-register">
+      <div class="card setup-form">
+        <div class="card-header">👤 考生信息登记</div>
+        <div class="form-group">
+          <label>部门</label>
+          <input type="text" id="reg-department" placeholder="请输入部门" autocomplete="off">
+        </div>
+        <div class="form-group">
+          <label>姓名</label>
+          <input type="text" id="reg-name" placeholder="请输入姓名" autocomplete="off">
+        </div>
+        <button class="btn btn-primary btn-block mt-8" id="btn-confirm-start">确认并开始考试</button>
+        <button class="btn btn-ghost btn-block" id="btn-back-setup">← 返回设置</button>
+      </div>
+    </div>
+
+    <!-- Quiz Screen -->
+    <div class="screen" id="screen-quiz">
+      <div class="quiz-top">
+        <div class="quiz-meta">
+          <span>第 <span class="q-num" id="q-current">1</span> / <span id="q-total">10</span> 题</span>
+          <span class="text-muted" id="q-type-label">单选题</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" id="quiz-progress" style="width: 0%"></div>
+        </div>
+      </div>
+      <div class="quiz-question-card" id="quiz-question-card"></div>
+      <div class="quiz-nav">
+        <button class="btn btn-outline btn-sm hidden" id="btn-prev">上一题</button>
+        <button class="btn btn-primary flex-1" id="btn-next">下一题</button>
+        <button class="btn btn-success hidden" id="btn-submit">交卷</button>
+      </div>
+    </div>
+
+    <!-- Result Screen -->
+    <div class="screen" id="screen-result">
+      <div class="card result-card" id="result-content"></div>
+    </div>
+
+    <!-- Review Screen -->
+    <div class="screen" id="screen-review">
+      <button class="btn btn-ghost btn-sm" id="btn-back-result" style="align-self:flex-start">← 返回成绩</button>
+      <div id="review-list"></div>
+    </div>
+
+    <!-- Records Screen -->
+    <div class="screen" id="screen-records">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:12px;">
+        <h3 style="font-size:18px;font-weight:700;margin:0;">📋 考试记录</h3>
+        <div class="records-actions">
+          <button class="btn btn-sm btn-outline" id="btn-export-records">导出 CSV</button>
+          <button class="btn btn-sm btn-danger" id="btn-clear-records">清空记录</button>
+        </div>
+      </div>
+      <div id="records-list"></div>
+      <div id="empty-records" class="empty-state hidden">
+        <span class="empty-icon">📭</span>
+        <h3>暂无考试记录</h3>
+        <p>完成考试后记录会自动保存在这里</p>
+      </div>
+    </div>
+  </main>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- Import Modal -->
+  <div class="modal-overlay hidden" id="import-modal">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <div class="modal-title">📥 导入题库</div>
+      <div class="import-tabs">
+        <button class="import-tab active" data-tab="paste">粘贴 JSON</button>
+        <button class="import-tab" data-tab="file">上传文件</button>
+        <button class="import-tab" data-tab="sample">示例题库</button>
+      </div>
+      <div class="card" style="border-radius: 0 0 var(--radius) var(--radius); border-top: none;">
+        <div class="import-panel active" id="panel-paste">
+          <textarea class="json-input" id="json-paste" placeholder="在此粘贴题库 JSON..."></textarea>
+          <button class="btn btn-primary btn-block mt-12" id="btn-import-paste">导入</button>
+        </div>
+        <div class="import-panel" id="panel-file">
+          <label class="file-upload-area" id="file-upload-area">
+            <span class="upload-icon">📂</span>
+            <p>点击选择 .json 文件</p>
+            <input type="file" accept=".json" id="file-input">
+          </label>
+          <p class="text-center text-muted mt-8" id="file-name" style="font-size:13px"></p>
+        </div>
+        <div class="import-panel" id="panel-sample">
+          <p class="text-muted" style="font-size:14px;line-height:1.6;">导入一份示例题库，包含单选题、多选题、判断题和填空题，方便你快速体验。</p>
+          <button class="btn btn-primary btn-block mt-12" id="btn-import-sample">导入示例题库</button>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" id="btn-close-modal">取消</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ==================== 考试软件 - 核心逻辑 ====================
+
+const STORAGE_KEY = 'exam_app_banks';
+const QUIZ_STATE_KEY = 'exam_app_quiz_state';
+
+// ===== Storage =====
+function loadBanks() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
+  catch { return []; }
+}
+function saveBanks(banks) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(banks));
+}
+
+const RECORDS_KEY = 'exam_app_records';
+function loadRecords() {
+  try { return JSON.parse(localStorage.getItem(RECORDS_KEY)) || []; }
+  catch { return []; }
+}
+function saveRecords(records) {
+  localStorage.setItem(RECORDS_KEY, JSON.stringify(records));
+}
+
+// ===== Toast =====
+function showToast(msg, type = '') {
+  const container = document.getElementById('toast-container');
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  toast.textContent = msg;
+  container.appendChild(toast);
+  setTimeout(() => { toast.style.opacity = '0'; toast.style.transition = 'opacity .3s'; }, 2000);
+  setTimeout(() => toast.remove(), 2400);
+}
+
+// ===== Screens =====
+function showScreen(name) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  const el = document.getElementById(`screen-${name}`);
+  if (el) el.classList.add('active');
+}
+
+// ===== Question Type Helpers =====
+const TYPE_LABELS = { single: '单选题', multiple: '多选题', truefalse: '判断题', fill: '填空题' };
+const TYPE_BADGES = { single: 'badge-single', multiple: 'badge-multiple', truefalse: 'badge-truefalse', fill: 'badge-fill' };
+const OPTION_LETTERS = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+// ===== Quiz Engine =====
+class QuizEngine {
+  constructor(questions, count, shuffleQuestions = true) {
+    const pool = shuffleQuestions ? shuffle(questions) : [...questions];
+    this.questions = pool.slice(0, Math.min(count, pool.length));
+    this.currentIndex = 0;
+    this.answers = new Array(this.questions.length).fill(null);
+    // null = unanswered, for multiple: Set, for others: value
+  }
+
+  get total() { return this.questions.length; }
+  get current() { return this.currentIndex; }
+  getCurrentQuestion() { return this.questions[this.currentIndex]; }
+  getAnswer(index) { return this.answers[index ?? this.currentIndex]; }
+
+  setAnswer(index, value) {
+    this.answers[index] = value;
+  }
+
+  toggleMultipleAnswer(index, optionIdx) {
+    if (!(this.answers[index] instanceof Set)) {
+      this.answers[index] = new Set();
+    }
+    const s = this.answers[index];
+    if (s.has(optionIdx)) s.delete(optionIdx);
+    else s.add(optionIdx);
+  }
+
+  hasMultipleSelected(index, optionIdx) {
+    const a = this.answers[index];
+    return a instanceof Set && a.has(optionIdx);
+  }
+
+  next() {
+    if (this.currentIndex < this.total - 1) { this.currentIndex++; return true; }
+    return false;
+  }
+  prev() {
+    if (this.currentIndex > 0) { this.currentIndex--; return true; }
+    return false;
+  }
+  goTo(index) {
+    if (index >= 0 && index < this.total) { this.currentIndex = index; }
+  }
+
+  calculateScore() {
+    let correct = 0;
+    const results = this.questions.map((q, i) => {
+      const userAns = this.answers[i];
+      let isCorrect = false;
+
+      if (q.type === 'multiple') {
+        if (!(userAns instanceof Set) || userAns.size === 0) { isCorrect = false; }
+        else {
+          const correctSet = new Set(q.answer);
+          isCorrect = userAns.size === correctSet.size && [...userAns].every(v => correctSet.has(v));
+        }
+      } else if (q.type === 'truefalse') {
+        isCorrect = userAns === q.answer;
+      } else if (q.type === 'fill') {
+        if (userAns === null || userAns === undefined) isCorrect = false;
+        else isCorrect = String(userAns).trim().toLowerCase() === String(q.answer).trim().toLowerCase();
+      } else {
+        // single
+        isCorrect = userAns === q.answer;
+      }
+
+      if (isCorrect) correct++;
+      return { question: q, userAnswer: userAns, isCorrect };
+    });
+    return { correct, total: this.questions.length, score: Math.round((correct / this.questions.length) * 100), results };
+  }
+
+  allAnswered() {
+    return this.answers.every((a, i) => {
+      if (a === null || a === undefined) return false;
+      if (this.questions[i].type === 'multiple') return a instanceof Set && a.size > 0;
+      return true;
+    });
+  }
+
+  unansweredCount() {
+    return this.answers.filter((a, i) => {
+      if (a === null || a === undefined) return true;
+      if (this.questions[i].type === 'multiple') return !(a instanceof Set && a.size > 0);
+      return false;
+    }).length;
+  }
+}
+
+// ===== App State =====
+let quizEngine = null;
+let quizResult = null;
+let examRegistration = null; // { department, name, bankName, count, shuffle, bankIndex }
+
+// ===== Render Bank List =====
+function renderBankList() {
+  const banks = loadBanks();
+  const listEl = document.getElementById('bank-list');
+  const emptyEl = document.getElementById('empty-banks');
+
+  if (banks.length === 0) {
+    listEl.innerHTML = '';
+    emptyEl.classList.remove('hidden');
+    return;
+  }
+
+  emptyEl.classList.add('hidden');
+  listEl.innerHTML = banks.map((bank, idx) => {
+    const qCount = bank.questions ? bank.questions.length : 0;
+    const typeCounts = {};
+    if (bank.questions) {
+      bank.questions.forEach(q => {
+        const t = q.type || 'single';
+        typeCounts[t] = (typeCounts[t] || 0) + 1;
+      });
+    }
+    const typeSummary = Object.entries(typeCounts)
+      .map(([t, c]) => `${TYPE_LABELS[t] || t}×${c}`)
+      .join(' · ');
+
+    return `
+      <div class="bank-item" data-bank-index="${idx}">
+        <div class="bank-icon">📚</div>
+        <div class="bank-info">
+          <div class="bank-name">${escapeHtml(bank.name || '未命名题库')}</div>
+          <div class="bank-meta">${qCount} 题${typeSummary ? ' · ' + typeSummary : ''}</div>
+        </div>
+        <div class="bank-actions">
+          <button class="btn-icon btn-export-bank" data-idx="${idx}" title="导出">📤</button>
+          <button class="btn-icon btn-delete-bank" data-idx="${idx}" title="删除" style="color:var(--c-error)">🗑</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  // Click bank → setup quiz
+  listEl.querySelectorAll('.bank-item').forEach(item => {
+    item.addEventListener('click', (e) => {
+      if (e.target.closest('.btn-export-bank') || e.target.closest('.btn-delete-bank')) return;
+      const idx = parseInt(item.dataset.bankIndex);
+      openSetup(idx);
+    });
+  });
+
+  // Export
+  listEl.querySelectorAll('.btn-export-bank').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const idx = parseInt(btn.dataset.idx);
+      exportBank(idx);
+    });
+  });
+
+  // Delete
+  listEl.querySelectorAll('.btn-delete-bank').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const idx = parseInt(btn.dataset.idx);
+      deleteBank(idx);
+    });
+  });
+}
+
+function escapeHtml(str) {
+  const d = document.createElement('div');
+  d.textContent = str;
+  return d.innerHTML;
+}
+
+// ===== Bank Operations =====
+function importBank(bankData) {
+  if (!bankData || !bankData.name || !Array.isArray(bankData.questions)) {
+    showToast('题库格式不正确，需要 name 和 questions 字段', 'error');
+    return false;
+  }
+  if (bankData.questions.length === 0) {
+    showToast('题库中没有题目', 'error');
+    return false;
+  }
+  // Validate questions
+  for (let i = 0; i < bankData.questions.length; i++) {
+    const q = bankData.questions[i];
+    if (!q.question || !q.type) {
+      showToast(`第 ${i + 1} 题格式不正确（缺少 question 或 type）`, 'error');
+      return false;
+    }
+    const validTypes = ['single', 'multiple', 'truefalse', 'fill'];
+    if (!validTypes.includes(q.type)) {
+      showToast(`第 ${i + 1} 题类型 "${q.type}" 无效，支持: ${validTypes.join(', ')}`, 'error');
+      return false;
+    }
+    if ((q.type === 'single' || q.type === 'multiple') && (!Array.isArray(q.options) || q.options.length < 2)) {
+      showToast(`第 ${i + 1} 题缺少选项`, 'error');
+      return false;
+    }
+    if (q.type === 'single' && (q.answer === undefined || q.answer === null)) {
+      showToast(`第 ${i + 1} 题缺少正确答案`, 'error');
+      return false;
+    }
+    if (q.type === 'multiple' && (!Array.isArray(q.answer) || q.answer.length === 0)) {
+      showToast(`第 ${i + 1} 题多选题答案应为数组`, 'error');
+      return false;
+    }
+  }
+
+  const banks = loadBanks();
+  banks.push({
+    id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
+    name: bankData.name,
+    description: bankData.description || '',
+    questions: bankData.questions,
+    importedAt: new Date().toISOString(),
+  });
+  saveBanks(banks);
+  showToast(`题库「${bankData.name}」导入成功！(${bankData.questions.length} 题)`, 'success');
+  renderBankList();
+  return true;
+}
+
+function exportBank(index) {
+  const banks = loadBanks();
+  if (index < 0 || index >= banks.length) return;
+  const bank = banks[index];
+  const exportData = {
+    name: bank.name,
+    description: bank.description,
+    questions: bank.questions,
+  };
+  const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `${bank.name || '题库'}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function deleteBank(index) {
+  const banks = loadBanks();
+  if (index < 0 || index >= banks.length) return;
+  const name = banks[index].name || '未命名';
+  if (!confirm(`确定删除题库「${name}」吗？此操作不可撤销。`)) return;
+  banks.splice(index, 1);
+  saveBanks(banks);
+  showToast(`题库「${name}」已删除`);
+  renderBankList();
+}
+
+// ===== Setup Screen =====
+function openSetup(bankIndex) {
+  const banks = loadBanks();
+  if (bankIndex < 0 || bankIndex >= banks.length) return;
+
+  const bank = banks[bankIndex];
+  const select = document.getElementById('setup-bank-select');
+  select.innerHTML = banks.map((b, i) => `<option value="${i}" ${i === bankIndex ? 'selected' : ''}>${escapeHtml(b.name || '未命名')} (${b.questions.length}题)</option>`).join('');
+
+  document.getElementById('setup-count').value = Math.min(10, bank.questions.length);
+  document.getElementById('setup-count').max = bank.questions.length;
+  document.getElementById('setup-count-hint').textContent = `该题库共 ${bank.questions.length} 题`;
+
+  // Update count hint when bank changes
+  select.onchange = () => {
+    const bi = parseInt(select.value);
+    const b = banks[bi];
+    document.getElementById('setup-count').max = b.questions.length;
+    document.getElementById('setup-count').value = Math.min(parseInt(document.getElementById('setup-count').value) || 10, b.questions.length);
+    document.getElementById('setup-count-hint').textContent = `该题库共 ${b.questions.length} 题`;
+  };
+
+  showScreen('setup');
+}
+
+// ===== Quiz =====
+function startQuiz() {
+  const banks = loadBanks();
+  const bankIdx = parseInt(document.getElementById('setup-bank-select').value);
+  const count = parseInt(document.getElementById('setup-count').value) || 10;
+  const shuffleQ = document.getElementById('setup-shuffle').classList.contains('on');
+
+  if (bankIdx < 0 || bankIdx >= banks.length) { showToast('请选择题库', 'error'); return; }
+
+  const bank = banks[bankIdx];
+  if (count < 1) { showToast('题目数量至少为 1', 'error'); return; }
+  if (count > bank.questions.length) { showToast(`题目数量不能超过题库总数 (${bank.questions.length})`, 'error'); return; }
+
+  // Store setup, go to registration
+  examRegistration = {
+    bankIndex: bankIdx,
+    bankName: bank.name,
+    count: count,
+    shuffle: shuffleQ,
+    department: '',
+    name: ''
+  };
+
+  document.getElementById('reg-department').value = '';
+  document.getElementById('reg-name').value = '';
+  showScreen('register');
+  setTimeout(() => document.getElementById('reg-department').focus(), 200);
+}
+
+function startExam() {
+  const dept = document.getElementById('reg-department').value.trim();
+  const uname = document.getElementById('reg-name').value.trim();
+
+  if (!dept) { showToast('请输入部门', 'error'); document.getElementById('reg-department').focus(); return; }
+  if (!uname) { showToast('请输入姓名', 'error'); document.getElementById('reg-name').focus(); return; }
+
+  examRegistration.department = dept;
+  examRegistration.name = uname;
+
+  const banks = loadBanks();
+  const bank = banks[examRegistration.bankIndex];
+
+  quizEngine = new QuizEngine(bank.questions, examRegistration.count, examRegistration.shuffle);
+  quizResult = null;
+
+  document.getElementById('q-total').textContent = quizEngine.total;
+
+  document.getElementById('btn-prev').classList.add('hidden');
+  document.getElementById('btn-submit').classList.add('hidden');
+  document.getElementById('btn-next').classList.remove('hidden');
+  document.getElementById('btn-next').textContent = quizEngine.total === 1 ? '交卷' : '下一题';
+
+  showScreen('quiz');
+  renderQuestion();
+  updateQuizProgress();
+}
+
+function renderQuestion() {
+  if (!quizEngine) return;
+  const q = quizEngine.getCurrentQuestion();
+  const idx = quizEngine.current;
+  const card = document.getElementById('quiz-question-card');
+
+  document.getElementById('q-current').textContent = idx + 1;
+  document.getElementById('q-type-label').textContent = TYPE_LABELS[q.type] || '单选题';
+
+  let html = `<span class="question-type-badge ${TYPE_BADGES[q.type] || 'badge-single'}">${TYPE_LABELS[q.type] || '单选题'}</span>`;
+  html += `<div class="question-text">${escapeHtml(q.question)}</div>`;
+
+  if (q.type === 'single') {
+    html += `<div class="quiz-options">`;
+    q.options.forEach((opt, oi) => {
+      const selected = quizEngine.getAnswer(idx) === oi;
+      html += `
+        <button class="option-btn ${selected ? 'selected' : ''}" data-option="${oi}">
+          <span class="option-letter">${OPTION_LETTERS[oi]}</span>
+          <span class="option-text">${escapeHtml(opt)}</span>
+        </button>`;
+    });
+    html += `</div>`;
+  } else if (q.type === 'multiple') {
+    html += `<div class="quiz-options">`;
+    q.options.forEach((opt, oi) => {
+      const selected = quizEngine.hasMultipleSelected(idx, oi);
+      html += `
+        <button class="option-btn ${selected ? 'selected' : ''}" data-option="${oi}">
+          <span class="option-letter">${OPTION_LETTERS[oi]}</span>
+          <span class="option-text">${escapeHtml(opt)}</span>
+        </button>`;
+    });
+    html += `</div>`;
+    html += `<p class="hint mt-8">可多选，点击选项切换选中状态</p>`;
+  } else if (q.type === 'truefalse') {
+    html += `<div class="quiz-options">`;
+    ['正确', '错误'].forEach((opt, oi) => {
+      const val = oi === 0 ? true : false;
+      const selected = quizEngine.getAnswer(idx) === val;
+      html += `
+        <button class="option-btn ${selected ? 'selected' : ''}" data-option="${oi}">
+          <span class="option-letter">${oi === 0 ? '✓' : '✗'}</span>
+          <span class="option-text">${opt}</span>
+        </button>`;
+    });
+    html += `</div>`;
+  } else if (q.type === 'fill') {
+    const currentVal = quizEngine.getAnswer(idx) || '';
+    html += `<input type="text" class="fill-input" id="fill-answer" value="${escapeHtml(String(currentVal))}" placeholder="请输入答案..." autocomplete="off">`;
+  }
+
+  card.innerHTML = html;
+
+  // Bind option clicks
+  card.querySelectorAll('.option-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const oi = parseInt(btn.dataset.option);
+      if (q.type === 'single' || q.type === 'truefalse') {
+        quizEngine.setAnswer(idx, q.type === 'truefalse' ? (oi === 0 ? true : false) : oi);
+        renderQuestion();
+      } else if (q.type === 'multiple') {
+        quizEngine.toggleMultipleAnswer(idx, oi);
+        renderQuestion();
+      }
+    });
+  });
+
+  // Fill input
+  const fillInput = card.querySelector('#fill-answer');
+  if (fillInput) {
+    fillInput.addEventListener('input', () => {
+      quizEngine.setAnswer(idx, fillInput.value);
+    });
+    // Auto focus
+    setTimeout(() => fillInput.focus(), 100);
+  }
+
+  updateQuizProgress();
+  updateNavButtons();
+}
+
+function updateQuizProgress() {
+  if (!quizEngine) return;
+  const answered = quizEngine.total - quizEngine.unansweredCount();
+  document.getElementById('quiz-progress').style.width = `${(answered / quizEngine.total) * 100}%`;
+}
+
+function updateNavButtons() {
+  if (!quizEngine) return;
+  const idx = quizEngine.current;
+  const total = quizEngine.total;
+
+  const btnPrev = document.getElementById('btn-prev');
+  const btnNext = document.getElementById('btn-next');
+  const btnSubmit = document.getElementById('btn-submit');
+
+  btnPrev.classList.toggle('hidden', idx === 0);
+
+  if (idx === total - 1) {
+    btnNext.classList.add('hidden');
+    btnSubmit.classList.remove('hidden');
+  } else {
+    btnNext.classList.remove('hidden');
+    btnSubmit.classList.add('hidden');
+    btnNext.textContent = '下一题';
+  }
+}
+
+function quizNext() {
+  if (!quizEngine) return;
+  // Validate current answer
+  const q = quizEngine.getCurrentQuestion();
+  const a = quizEngine.getAnswer();
+  if (a === null || a === undefined || (q.type === 'multiple' && !(a instanceof Set && a.size > 0))) {
+    showToast('请先作答本题', 'error');
+    return;
+  }
+
+  if (quizEngine.next()) {
+    renderQuestion();
+    document.getElementById('quiz-question-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+}
+
+function quizPrev() {
+  if (!quizEngine) return;
+  if (quizEngine.prev()) {
+    renderQuestion();
+    document.getElementById('quiz-question-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+}
+
+function submitQuiz() {
+  if (!quizEngine) return;
+  // Check last question
+  const q = quizEngine.getCurrentQuestion();
+  const a = quizEngine.getAnswer();
+  if (a === null || a === undefined || (q.type === 'multiple' && !(a instanceof Set && a.size > 0))) {
+    showToast('请先作答本题', 'error');
+    return;
+  }
+
+  const unanswered = quizEngine.unansweredCount();
+  if (unanswered > 0) {
+    if (!confirm(`还有 ${unanswered} 题未作答，确定交卷吗？`)) return;
+  } else {
+    if (!confirm('确定交卷吗？交卷后无法修改答案。')) return;
+  }
+
+  quizResult = quizEngine.calculateScore();
+  showResult();
+}
+
+function showResult() {
+  if (!quizResult) return;
+  const { correct, total, score } = quizResult;
+
+  // Save exam record
+  const now = new Date();
+  const dateStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+  const records = loadRecords();
+  records.push({
+    id: Date.now(),
+    date: dateStr,
+    department: examRegistration ? examRegistration.department : '',
+    name: examRegistration ? examRegistration.name : '',
+    bankName: examRegistration ? examRegistration.bankName : '',
+    score: score,
+    correct: correct,
+    total: total
+  });
+  saveRecords(records);
+
+  const color = score >= 80 ? 'var(--c-success)' : score >= 60 ? 'var(--c-warning)' : 'var(--c-error)';
+  const circumference = 2 * Math.PI * 56;
+  const offset = circumference - (score / 100) * circumference;
+
+  document.getElementById('result-content').innerHTML = `
+    <div class="score-circle">
+      <svg width="140" height="140" viewBox="0 0 140 140">
+        <circle class="bg" cx="70" cy="70" r="56"/>
+        <circle class="fg" cx="70" cy="70" r="56" stroke="${color}" stroke-dasharray="${circumference}" stroke-dashoffset="${circumference}" id="score-circle-fg"/>
+      </svg>
+      <div class="score-text">
+        <span class="score-num" style="color:${color}">${score}</span>
+        <span class="score-label">分</span>
+      </div>
+    </div>
+    <div class="result-stats">
+      <div class="stat-item stat-correct">
+        <div class="stat-num">${correct}</div>
+        <div class="stat-label">✅ 正确</div>
+      </div>
+      <div class="stat-item stat-wrong">
+        <div class="stat-num">${total - correct}</div>
+        <div class="stat-label">❌ 错误</div>
+      </div>
+      <div class="stat-item stat-total">
+        <div class="stat-num">${total}</div>
+        <div class="stat-label">📝 总题数</div>
+      </div>
+    </div>
+    ${examRegistration ? `
+    <div class="card" style="margin-top:12px;padding:12px 16px;background:var(--c-bg);border-radius:var(--radius-sm);text-align:left;">
+      <div style="font-size:12px;color:var(--c-text-secondary);margin-bottom:6px;">考生信息</div>
+      <div style="display:flex;gap:16px;font-size:14px;font-weight:500;">
+        <span>🏢 ${escapeHtml(examRegistration.department)}</span>
+        <span>👤 ${escapeHtml(examRegistration.name)}</span>
+      </div>
+    </div>
+    ` : ''}
+    <div class="result-actions">
+      <button class="btn btn-primary btn-block" id="btn-review">查看答题详情</button>
+      <button class="btn btn-outline btn-block" id="btn-result-records">查看考试记录</button>
+      <button class="btn btn-outline btn-block" id="btn-retry">重新考试</button>
+      <button class="btn btn-ghost btn-block" id="btn-result-home">返回首页</button>
+    </div>
+  `;
+
+  showScreen('result');
+
+  // Animate score circle
+  setTimeout(() => {
+    const fg = document.getElementById('score-circle-fg');
+    if (fg) fg.style.strokeDashoffset = offset;
+  }, 200);
+
+  // Bind buttons
+  document.getElementById('btn-review').onclick = showReview;
+  document.getElementById('btn-result-records').onclick = showRecords;
+  document.getElementById('btn-retry').onclick = () => showScreen('setup');
+  document.getElementById('btn-result-home').onclick = goHome;
+}
+
+function showReview() {
+  if (!quizResult) return;
+  const list = document.getElementById('review-list');
+  list.innerHTML = quizResult.results.map((r, i) => {
+    const q = r.question;
+    let userAnsStr = '';
+    let correctAnsStr = '';
+
+    if (q.type === 'single') {
+      userAnsStr = r.userAnswer !== null && r.userAnswer !== undefined ? `${OPTION_LETTERS[r.userAnswer]}. ${escapeHtml(q.options[r.userAnswer] || '')}` : '未作答';
+      correctAnsStr = `${OPTION_LETTERS[q.answer]}. ${escapeHtml(q.options[q.answer] || '')}`;
+    } else if (q.type === 'multiple') {
+      if (r.userAnswer instanceof Set && r.userAnswer.size > 0) {
+        userAnsStr = [...r.userAnswer].map(oi => `${OPTION_LETTERS[oi]}. ${escapeHtml(q.options[oi] || '')}`).join('；');
+      } else {
+        userAnsStr = '未作答';
+      }
+      correctAnsStr = q.answer.map(oi => `${OPTION_LETTERS[oi]}. ${escapeHtml(q.options[oi] || '')}`).join('；');
+    } else if (q.type === 'truefalse') {
+      userAnsStr = r.userAnswer === true ? '正确' : r.userAnswer === false ? '错误' : '未作答';
+      correctAnsStr = q.answer === true ? '正确' : '错误';
+    } else if (q.type === 'fill') {
+      userAnsStr = r.userAnswer || '未作答';
+      correctAnsStr = q.answer;
+    }
+
+    return `
+      <div class="review-item ${r.isCorrect ? 'correct' : 'wrong'}">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+          <span class="question-type-badge ${TYPE_BADGES[q.type] || 'badge-single'}" style="margin-bottom:0">${TYPE_LABELS[q.type]}</span>
+          <span style="font-size:13px;color:var(--c-text-secondary)">第 ${i + 1} 题</span>
+          <span style="margin-left:auto;font-weight:600;font-size:14px;${r.isCorrect ? 'color:var(--c-success)' : 'color:var(--c-error)'}">${r.isCorrect ? '✓ 正确' : '✗ 错误'}</span>
+        </div>
+        <div class="review-q">${escapeHtml(q.question)}</div>
+        <div class="review-answer user-ans ${r.isCorrect ? 'correct-ans' : ''}">
+          <span class="label">你的答案：</span>${userAnsStr}
+        </div>
+        ${!r.isCorrect ? `<div class="review-answer correct-ans"><span class="label">正确答案：</span>${correctAnsStr}</div>` : ''}
+        ${q.explanation ? `<div class="review-explanation">💡 ${escapeHtml(q.explanation)}</div>` : ''}
+      </div>
+    `;
+  }).join('');
+
+  showScreen('review');
+}
+
+function showRecords() {
+  const records = loadRecords();
+  const listEl = document.getElementById('records-list');
+  const emptyEl = document.getElementById('empty-records');
+
+  if (records.length === 0) {
+    listEl.innerHTML = '';
+    emptyEl.classList.remove('hidden');
+  } else {
+    emptyEl.classList.add('hidden');
+    // Sort newest first
+    const sorted = [...records].reverse();
+    listEl.innerHTML = sorted.map(r => {
+      const color = r.score >= 80 ? 'var(--c-success)' : r.score >= 60 ? 'var(--c-warning)' : 'var(--c-error)';
+      return `
+        <div class="record-item">
+          <div class="record-header">
+            <div class="record-name">${escapeHtml(r.name)} · ${escapeHtml(r.department)}</div>
+            <div class="record-score" style="color:${color}">${r.score} 分</div>
+          </div>
+          <div class="record-meta">
+            <span>📚 ${escapeHtml(r.bankName)}</span>
+            <span>✅ ${r.correct}/${r.total} 正确</span>
+          </div>
+          <div class="record-date">🕐 ${r.date}</div>
+        </div>
+      `;
+    }).join('');
+  }
+  showScreen('records');
+}
+
+function exportRecordsCSV() {
+  const records = loadRecords();
+  if (records.length === 0) { showToast('暂无记录可导出', 'error'); return; }
+  // BOM for Excel Chinese support
+  let csv = '\uFEFF日期,部门,姓名,题库,分数,正确数,总题数\n';
+  records.forEach(r => {
+    csv += `${r.date},${r.department},${r.name},"${r.bankName}",${r.score},${r.correct},${r.total}\n`;
+  });
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `考试记录_${new Date().toISOString().slice(0,10)}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  showToast('记录已导出为 CSV 文件', 'success');
+}
+
+function clearRecords() {
+  if (!confirm('确定清空所有考试记录吗？此操作不可撤销。')) return;
+  saveRecords([]);
+  showRecords();
+  showToast('记录已清空', 'success');
+}
+
+function goHome() {
+  quizEngine = null;
+  quizResult = null;
+  examRegistration = null;
+  showScreen('home');
+  renderBankList();
+}
+
+// ===== Modal =====
+function openImportModal() {
+  document.getElementById('import-modal').classList.remove('hidden');
+  // Reset tabs
+  document.querySelectorAll('.import-tab').forEach((t, i) => t.classList.toggle('active', i === 0));
+  document.querySelectorAll('.import-panel').forEach((p, i) => p.classList.toggle('active', i === 0));
+  document.getElementById('json-paste').value = '';
+  document.getElementById('file-name').textContent = '';
+}
+
+function closeImportModal() {
+  document.getElementById('import-modal').classList.add('hidden');
+}
+
+// ===== Event Bindings =====
+document.getElementById('btn-import').addEventListener('click', openImportModal);
+document.getElementById('btn-close-modal').addEventListener('click', closeImportModal);
+document.getElementById('btn-home').addEventListener('click', goHome);
+document.getElementById('btn-empty-import').addEventListener('click', openImportModal);
+
+// Import modal overlay click to close
+document.getElementById('import-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeImportModal();
+});
+
+// Import tabs
+document.querySelectorAll('.import-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    const target = tab.dataset.tab;
+    document.querySelectorAll('.import-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    document.querySelectorAll('.import-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById(`panel-${target}`).classList.add('active');
+  });
+});
+
+// Paste import
+document.getElementById('btn-import-paste').addEventListener('click', () => {
+  const raw = document.getElementById('json-paste').value.trim();
+  if (!raw) { showToast('请粘贴 JSON 内容', 'error'); return; }
+  try {
+    const data = JSON.parse(raw);
+    if (importBank(data)) closeImportModal();
+  } catch (e) {
+    showToast('JSON 格式错误，请检查', 'error');
+  }
+});
+
+// File import
+const fileArea = document.getElementById('file-upload-area');
+const fileInput = document.getElementById('file-input');
+fileArea.addEventListener('dragover', (e) => { e.preventDefault(); fileArea.classList.add('dragover'); });
+fileArea.addEventListener('dragleave', () => fileArea.classList.remove('dragover'));
+fileArea.addEventListener('drop', (e) => {
+  e.preventDefault();
+  fileArea.classList.remove('dragover');
+  if (e.dataTransfer.files.length > 0) handleFile(e.dataTransfer.files[0]);
+});
+fileInput.addEventListener('change', () => {
+  if (fileInput.files.length > 0) handleFile(fileInput.files[0]);
+});
+function handleFile(file) {
+  document.getElementById('file-name').textContent = `已选择: ${file.name}`;
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const data = JSON.parse(reader.result);
+      if (importBank(data)) closeImportModal();
+    } catch (e) {
+      showToast('文件 JSON 格式错误', 'error');
+    }
+  };
+  reader.readAsText(file);
+}
+
+// Sample import
+document.getElementById('btn-import-sample').addEventListener('click', () => {
+  const sample = getSampleBank();
+  if (importBank(sample)) closeImportModal();
+});
+
+// Toggle
+document.getElementById('setup-shuffle').addEventListener('click', function() {
+  this.classList.toggle('on');
+});
+
+// Start quiz
+document.getElementById('btn-start-quiz').addEventListener('click', startQuiz);
+
+// Quiz navigation
+document.getElementById('btn-next').addEventListener('click', quizNext);
+document.getElementById('btn-prev').addEventListener('click', quizPrev);
+document.getElementById('btn-submit').addEventListener('click', submitQuiz);
+
+// Review back
+document.getElementById('btn-back-result').addEventListener('click', showResult);
+
+// Registration → start exam
+document.getElementById('btn-confirm-start').addEventListener('click', startExam);
+document.getElementById('btn-back-setup').addEventListener('click', () => { showScreen('setup'); });
+
+// Records
+document.getElementById('btn-records').addEventListener('click', showRecords);
+document.getElementById('home-records-card').addEventListener('click', showRecords);
+document.getElementById('btn-export-records').addEventListener('click', exportRecordsCSV);
+document.getElementById('btn-clear-records').addEventListener('click', clearRecords);
+
+// ===== Sample Question Bank =====
+function getSampleBank() {
+  return {
+    name: '示例题库 - 综合知识',
+    description: '一份包含各种题型的示例题库，帮助你快速了解软件功能',
+    questions: [
+      {
+        type: 'single',
+        question: 'HTML 的全称是什么？',
+        options: ['HyperText Markup Language', 'HighText Machine Language', 'HyperTool Multi Language', 'Home Tool Markup Language'],
+        answer: 0,
+        explanation: 'HTML 全称为 HyperText Markup Language（超文本标记语言），是构建网页的标准标记语言。'
+      },
+      {
+        type: 'single',
+        question: 'CSS 中，以下哪个属性用于设置文字颜色？',
+        options: ['font-color', 'text-color', 'color', 'foreground'],
+        answer: 2,
+        explanation: 'CSS 中使用 color 属性设置文字颜色，例如 color: red;'
+      },
+      {
+        type: 'single',
+        question: 'JavaScript 中，typeof null 的结果是什么？',
+        options: ['"null"', '"undefined"', '"object"', '"number"'],
+        answer: 2,
+        explanation: '这是 JavaScript 的一个历史遗留 bug，typeof null 返回 "object"。'
+      },
+      {
+        type: 'multiple',
+        question: '以下哪些是有效的 HTTP 请求方法？',
+        options: ['GET', 'SEND', 'POST', 'FETCH'],
+        answer: [0, 2],
+        explanation: 'GET 和 POST 是标准的 HTTP 方法。SEND 和 FETCH 不是。其他常见方法还包括 PUT、DELETE、PATCH 等。'
+      },
+      {
+        type: 'multiple',
+        question: '以下哪些属于关系型数据库？',
+        options: ['MySQL', 'MongoDB', 'PostgreSQL', 'Redis'],
+        answer: [0, 2],
+        explanation: 'MySQL 和 PostgreSQL 是关系型数据库。MongoDB 是文档数据库，Redis 是键值存储。'
+      },
+      {
+        type: 'truefalse',
+        question: 'HTTPS 协议中，数据在传输过程中是加密的。',
+        answer: true,
+        explanation: 'HTTPS 使用 TLS/SSL 协议对数据进行加密传输，保证通信安全。'
+      },
+      {
+        type: 'truefalse',
+        question: 'Python 是一种编译型语言。',
+        answer: false,
+        explanation: 'Python 是解释型语言（虽然也有编译为字节码的过程，但通常归类为解释型）。C/C++ 等属于编译型语言。'
+      },
+      {
+        type: 'fill',
+        question: '在终端中，用于列出当前目录文件的 Linux 命令是 ___。',
+        answer: 'ls',
+        explanation: 'ls（list）命令用于列出目录内容。Windows 下对应的命令是 dir。'
+      },
+      {
+        type: 'fill',
+        question: 'Git 中，将暂存区的修改提交到本地仓库的命令是 git ___。',
+        answer: 'commit',
+        explanation: 'git commit 用于将暂存区（staging area）的修改提交到本地仓库。'
+      },
+      {
+        type: 'single',
+        question: '1KB 等于多少字节？',
+        options: ['100', '512', '1000', '1024'],
+        answer: 3,
+        explanation: '在计算机中，1KB = 1024 Bytes（2的10次方）。'
+      }
+    ]
+  };
+}
+
+// ===== Init =====
+function init() {
+  renderBankList();
+
+  // Register service worker for PWA / offline support
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./sw.js').catch(() => {});
+  }
+}
+
+init();
+</script>
+
+</body>
+</html>

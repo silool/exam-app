@@ -1,0 +1,72 @@
+{
+  "name": "示例题库 - 计算机基础",
+  "description": "包含单选、多选、判断和填空题的示例题库",
+  "questions": [
+    {
+      "type": "single",
+      "question": "HTTP 协议的默认端口号是？",
+      "options": ["21", "80", "443", "8080"],
+      "answer": 1,
+      "explanation": "HTTP 默认使用 80 端口，HTTPS 使用 443 端口。"
+    },
+    {
+      "type": "single",
+      "question": "以下哪个不是关系型数据库？",
+      "options": ["MySQL", "PostgreSQL", "MongoDB", "SQLite"],
+      "answer": 2,
+      "explanation": "MongoDB 是文档型 NoSQL 数据库，其他三个都是关系型数据库。"
+    },
+    {
+      "type": "multiple",
+      "question": "以下哪些是 JavaScript 的数据类型？",
+      "options": ["String", "Integer", "Boolean", "Undefined"],
+      "answer": [0, 2, 3],
+      "explanation": "JavaScript 有 String、Boolean、Undefined 等类型，但没有 Integer 类型，数字统称为 Number。"
+    },
+    {
+      "type": "multiple",
+      "question": "以下哪些是有效的 HTTP 请求方法？",
+      "options": ["GET", "SEND", "POST", "DELETE"],
+      "answer": [0, 2, 3],
+      "explanation": "GET、POST、DELETE 都是标准 HTTP 方法，SEND 不是。"
+    },
+    {
+      "type": "truefalse",
+      "question": "TCP 是面向连接的协议，UDP 是无连接的协议。",
+      "answer": true,
+      "explanation": "TCP 需要三次握手建立连接，是面向连接的；UDP 直接发送数据，是无连接的。"
+    },
+    {
+      "type": "truefalse",
+      "question": "CSS 中的 `display: none` 和 `visibility: hidden` 效果完全相同。",
+      "answer": false,
+      "explanation": "display: none 会让元素完全脱离文档流且不占空间，visibility: hidden 则保留元素占位空间。"
+    },
+    {
+      "type": "fill",
+      "question": "在 Linux 系统中，列出当前目录文件的命令是 ___。",
+      "answer": "ls",
+      "explanation": "ls 命令用于列出目录内容。"
+    },
+    {
+      "type": "fill",
+      "question": "Python 中用于定义函数的关键字是 ___。",
+      "answer": "def",
+      "explanation": "使用 def 关键字定义函数，例如 def my_function():"
+    },
+    {
+      "type": "single",
+      "question": "1 KB 等于多少字节？",
+      "options": ["100", "512", "1000", "1024"],
+      "answer": 3,
+      "explanation": "在计算机中，1 KB = 1024 Bytes（2^10）。"
+    },
+    {
+      "type": "single",
+      "question": "以下哪个是版本控制工具？",
+      "options": ["Docker", "Git", "Nginx", "Jenkins"],
+      "answer": 1,
+      "explanation": "Git 是分布式版本控制系统，Docker 是容器平台，Nginx 是 Web 服务器，Jenkins 是 CI/CD 工具。"
+    }
+  ]
+}

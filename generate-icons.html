@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>图标生成器 - 考试软件</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; max-width: 600px; margin: 40px auto; padding: 20px; background: #f1f5f9; color: #1e293b; }
+    h2 { color: #6366f1; }
+    .card { background: #fff; border-radius: 14px; padding: 24px; box-shadow: 0 1px 3px rgba(0,0,0,.08); margin-bottom: 16px; }
+    .preview { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; margin: 16px 0; }
+    .preview-item { text-align: center; }
+    .preview-item canvas { border-radius: 20px; box-shadow: 0 2px 8px rgba(0,0,0,.1); }
+    .preview-item p { font-size: 13px; color: #64748b; margin-top: 6px; }
+    .btn { display: inline-flex; align-items: center; gap: 6px; padding: 12px 24px; border-radius: 25px; font-size: 15px; font-weight: 600; cursor: pointer; border: none; transition: all .15s; }
+    .btn:active { transform: scale(.96); }
+    .btn-primary { background: #6366f1; color: #fff; }
+    .btn-success { background: #10b981; color: #fff; }
+    .btn-group { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
+    .note { font-size: 13px; color: #64748b; margin-top: 12px; line-height: 1.6; }
+    code { background: #e2e8f0; padding: 2px 6px; border-radius: 4px; font-size: 12px; }
+  </style>
+</head>
+<body>
+
+<div class="card">
+  <h2>🎨 图标 PNG 生成器</h2>
+  <p style="color:#64748b;margin-top:4px;">Android APK 打包需要 PNG 格式图标，SVG 不行</p>
+
+  <div class="preview">
+    <div class="preview-item">
+      <canvas id="c192" width="192" height="192"></canvas>
+      <p>192 × 192</p>
+    </div>
+    <div class="preview-item">
+      <canvas id="c512" width="512" height="512"></canvas>
+      <p>512 × 512</p>
+    </div>
+  </div>
+
+  <div class="btn-group">
+    <button class="btn btn-primary" onclick="downloadPNG(192, 'icon-192.png')">⬇ 下载 192×192</button>
+    <button class="btn btn-primary" onclick="downloadPNG(512, 'icon-512.png')">⬇ 下载 512×512</button>
+    <button class="btn btn-success" onclick="downloadBoth()">📦 一键下载两个</button>
+  </div>
+
+  <div class="note">
+    <strong>使用方法：</strong><br>
+    ① 下载 <code>icon-192.png</code> 和 <code>icon-512.png</code><br>
+    ② 把两个文件放到 <code>exam-app/</code> 文件夹里<br>
+    ③ 重新部署到 Netlify
+  </div>
+</div>
+
+<script>
+  const SVG_URL = './icon.svg';
+
+  function renderIcon(size, canvasId) {
+    const canvas = document.getElementById(canvasId);
+    const ctx = canvas.getContext('2d');
+    const img = new Image();
+    
+    // Fallback: draw directly if SVG fails to load
+    img.onerror = () => drawFallback(ctx, size);
+    
+    img.onload = () => {
+      // Draw background first (for maskable safe zone simulation)
+      ctx.clearRect(0, 0, size, size);
+      
+      // Scale to fill with slight padding for maskable
+      const padding = size * 0.08;
+      ctx.drawImage(img, padding, padding, size - padding * 2, size - padding * 2);
+    };
+
+    // Try to load SVG, fallback to drawn icon
+    img.src = SVG_URL;
+    setTimeout(() => {
+      if (!img.complete || img.naturalWidth === 0) {
+        drawFallback(ctx, size);
+      }
+    }, 500);
+  }
+
+  function drawFallback(ctx, size) {
+    // Draw a nice gradient icon as fallback
+    const grad = ctx.createLinearGradient(0, 0, size, size);
+    grad.addColorStop(0, '#6366f1');
+    grad.addColorStop(1, '#8b5cf6');
+    
+    // Rounded rect background
+    const r = size * 0.2;
+    ctx.beginPath();
+    ctx.moveTo(r, 0);
+    ctx.lineTo(size - r, 0);
+    ctx.quadraticCurveTo(size, 0, size, r);
+    ctx.lineTo(size, size - r);
+    ctx.quadraticCurveTo(size, size, size - r, size);
+    ctx.lineTo(r, size);
+    ctx.quadraticCurveTo(0, size, 0, size - r);
+    ctx.lineTo(0, r);
+    ctx.quadraticCurveTo(0, 0, r, 0);
+    ctx.closePath();
+    ctx.fillStyle = grad;
+    ctx.fill();
+
+    // Document icon
+    const s = size * 0.45;
+    const x = size * 0.28;
+    const y = size * 0.25;
+    
+    // Paper
+    ctx.fillStyle = 'rgba(255,255,255,0.25)';
+    ctx.strokeStyle = 'white';
+    ctx.lineWidth = size * 0.04;
+    ctx.lineJoin = 'round';
+    const rr = size * 0.06;
+    ctx.beginPath();
+    ctx.moveTo(x + rr, y);
+    ctx.lineTo(x + s - rr, y);
+    ctx.quadraticCurveTo(x + s, y, x + s, y + rr);
+    ctx.lineTo(x + s, y + s - rr);
+    ctx.quadraticCurveTo(x + s, y + s, x + s - rr, y + s);
+    ctx.lineTo(x + rr, y + s);
+    ctx.quadraticCurveTo(x, y + s, x, y + s - rr);
+    ctx.lineTo(x, y + rr);
+    ctx.quadraticCurveTo(x, y, x + rr, y);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+
+    // Lines on paper
+    ctx.strokeStyle = 'rgba(255,255,255,0.5)';
+    ctx.lineWidth = size * 0.025;
+    ctx.lineCap = 'round';
+    const lx = x + s * 0.15;
+    const lw = s * 0.7;
+    ctx.beginPath(); ctx.moveTo(lx, y + s * 0.22); ctx.lineTo(lx + lw, y + s * 0.22); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(lx, y + s * 0.38); ctx.lineTo(lx + lw * 0.85, y + s * 0.38); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(lx, y + s * 0.54); ctx.lineTo(lx + lw * 0.7, y + s * 0.54); ctx.stroke();
+
+    // Checkmark
+    const cx = size * 0.68;
+    const cy = size * 0.62;
+    const cr = size * 0.16;
+    ctx.fillStyle = 'rgba(255,255,255,0.25)';
+    ctx.strokeStyle = 'white';
+    ctx.lineWidth = size * 0.035;
+    ctx.beginPath();
+    ctx.arc(cx, cy, cr, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+
+    // Check
+    ctx.strokeStyle = 'white';
+    ctx.lineWidth = size * 0.035;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.beginPath();
+    ctx.moveTo(cx - cr * 0.5, cy);
+    ctx.lineTo(cx - cr * 0.1, cy + cr * 0.4);
+    ctx.lineTo(cx + cr * 0.55, cy - cr * 0.35);
+    ctx.stroke();
+  }
+
+  function downloadPNG(size, filename) {
+    const canvasId = size === 192 ? 'c192' : 'c512';
+    const canvas = document.getElementById(canvasId);
+    canvas.toBlob(blob => {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }, 'image/png');
+  }
+
+  function downloadBoth() {
+    downloadPNG(192, 'icon-192.png');
+    setTimeout(() => downloadPNG(512, 'icon-512.png'), 300);
+  }
+
+  // Render previews on load
+  window.addEventListener('DOMContentLoaded', () => {
+    renderIcon(192, 'c192');
+    renderIcon(512, 'c512');
+  });
+</script>
+
+</body>
+</html>

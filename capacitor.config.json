@@ -1,0 +1,8 @@
+{
+  "appId": "com.examapp.pwa",
+  "appName": "考试宝",
+  "webDir": "www",
+  "server": {
+    "androidScheme": "https"
+  }
+}
