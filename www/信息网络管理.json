@@ -1,0 +1,1938 @@
+{
+  "name": "信息网络管理",
+  "description": "共 161 题（单选题）",
+  "questions": [
+    {
+      "type": "single",
+      "question": "(1) 国际上负责分配IP地址的专业组织划分了几个网段作为私有网段，可以供人们在私有网络上自由分配使用，以下不属于私有地址的网段是（　　）。",
+      "options": [
+        "10.0.0.0/8",
+        "172.16.0.0/12",
+        "192.168.0.0/16",
+        "224.0.0.0/8"
+      ],
+      "answer": 3,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(2) 下列传输介质中，采用RJ-45接头作为连通器件的是（　　）。",
+      "options": [
+        "光纤",
+        "粗缆",
+        "细缆",
+        "双绞线"
+      ],
+      "answer": 3,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(3) PPP协议的Protocol字段的值为8021，代表的协议是（　　）。",
+      "options": [
+        "LCP",
+        "IPCP",
+        "IP",
+        "IPX"
+      ],
+      "answer": 1,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(4) 10BASE-T是指（　　）。",
+      "options": [
+        "粗同轴电缆",
+        "细同轴电缆",
+        "双绞线",
+        "光纤"
+      ],
+      "answer": 2,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(5) 在以下（　　）情形下，数据报文的源IP和目的IP地址是确定的主机地址。",
+      "options": [
+        "广播（Broadcast）",
+        "组播（Multicast）",
+        "单播（Unicast）",
+        "以上答案都不对"
+      ],
+      "answer": 2,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(6) 通过“SG186 工程”的实施，国家电网公司信息系统进入以“大网络、大系统、（　　）、高可靠性、高安全性”为标志的“三大两高”时代。",
+      "options": [
+        "大应用",
+        "大集中",
+        "大范围",
+        "大流量"
+      ],
+      "answer": 1,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(7) 国家电网公司信息发展规划编制要求符合（　　）。",
+      "options": [
+        "具有国际一流水准",
+        "符合中国国情",
+        "体现电网特色",
+        "以上全是"
+      ],
+      "answer": 3,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(8) 《国家电网公司应用软件通用安全要求》中规定，在系统上线投运前，应进行软件产品最终的（　　），检查软件产品是否满了安全需求。",
+      "options": [
+        "风险评估",
+        "安全性测试和评估",
+        "安全定级",
+        "试运行"
+      ],
+      "answer": 1,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(9) 对信息机房的空调设备要求每天进行（　　）次巡检。",
+      "options": [
+        "1",
+        "2",
+        "3",
+        "4"
+      ],
+      "answer": 3,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(1) 为保障管理信息系统运行可靠，数据备份应具有可靠的备份介质及至少（　　）份以上拷贝。",
+      "options": [
+        "1",
+        "2",
+        "3",
+        "4"
+      ],
+      "answer": 1,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(11) 根据《国家电网公司保密工作管理办法》，加强对工作用计算机上互联网的保密管理，严禁通过互联网传输涉密信息。不得在没有相应保密措施的计算机信息系统中（　　）国家秘密、企业秘密。",
+      "options": [
+        "处理、存储和传输",
+        "查看、修改",
+        "篡改、盗窃",
+        "增加、删除"
+      ],
+      "answer": 0,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(12) 国家电网公司网络与信息系统安全运行情况通报工作实行“统一领导，（　　），逐级上报”的工作方针。",
+      "options": [
+        "分级管理",
+        "分级负责",
+        "分级主管",
+        "分级运营"
+      ],
+      "answer": 0,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(13) 《国家电网公司信息安全风险评估管理暂行办法》中规定，风险评估工作的周期是（　　）年。",
+      "options": [
+        "1～２",
+        "２～３",
+        "３～４",
+        "４～５"
+      ],
+      "answer": 1,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(14) 以下（　　）字段内容不会出现在TCP报文头部的字段中。",
+      "options": [
+        "目的IP地址",
+        "URG",
+        "窗口",
+        "源端口"
+      ],
+      "answer": 0,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(15) （　　）用于连接终端与控制台端口。",
+      "options": [
+        "直通线",
+        "全反线",
+        "交叉线",
+        "同轴电缆"
+      ],
+      "answer": 1,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(16) 在以太网中，是根据（　　）地址来区分不同的设备的。",
+      "options": [
+        "LLC地址",
+        "MAC地址",
+        "IP地址",
+        "IPX地址"
+      ],
+      "answer": 1,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(17) 下面(  )是正确的默认路由(default route)。",
+      "options": [
+        "route ip 172.0.0.0 255.0.0.0 s0",
+        "ip route 0.0.0.0 0.0.0.0 172.16.20.1",
+        "ip route 0.0.0.0 255.255.255.255 172.16.20.1",
+        "route ip 0.0.0.0 255.255.255.0 172.16.10.11 50"
+      ],
+      "answer": 1,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(18) 国家电网公司提出了构建以“两级三线”为基础的运维体系规范，其中的“两级”是指（　　）分别建设信息系统运行中心，形成两级信息运维体系。",
+      "options": [
+        "公司总部和各网省公司",
+        "各网省公司和所属地市公司",
+        "各地市公司和所属县供电企业",
+        "公司总部和各地市公司"
+      ],
+      "answer": 0,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(19) 信息化项目的管理实行审批、核准或核备制度，重大信息化项目还要实行（　　）制度。",
+      "options": [
+        "招投标",
+        "后评估",
+        "审计",
+        "监理"
+      ],
+      "answer": 1,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(2) 《国家电网公司信息网络IP 地址编码规范》中规定 IP 地址的第一个八位位组取值是（　　）。",
+      "options": [
+        "10.0",
+        "11.0",
+        "12.0",
+        "15.0"
+      ],
+      "answer": 0,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(21) 信息运维工作的“三化”原则是指（　　）。",
+      "options": [
+        "主业化、集成化、专业化",
+        "一体化、专业化、集中化",
+        "主业化、集中化、专业化",
+        "一体化、专业化、标准化"
+      ],
+      "answer": 2,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(22) 《国家电网公司信息系统安全管理办法》规定：在规划和建设信息系统时，信息系统安全防护措施应按照“三同步”原则，与信息系统建设同步规划、同步（　　）、同步投入运行。",
+      "options": [
+        "建设",
+        "批准",
+        "施工",
+        "安装"
+      ],
+      "answer": 0,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(23) （　　）是《国家电网公司保密工作管理办法》的规定。",
+      "options": [
+        "不得在普通传真机上发送涉及国家秘密、企业秘密的文件",
+        "通过机要交换或机要通信传递机密级、秘密级载体时，封装秘密载体的信封上应标明\n密级、编号和收、发件单位名称",
+        "各单位对外网站、自办媒体应认真履行保密检查制度，严格按照公司保密规定审定各\n类稿件或信息，严防失、泄密事件发生",
+        "以上全是"
+      ],
+      "answer": 3,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(24) 由国家电网公司统一组织、代表公司意志自主开发的信息系统软件属于（　　）。",
+      "options": [
+        "独立开发软件",
+        "自主开发软件",
+        "合作开发软件",
+        "委托开发软件"
+      ],
+      "answer": 1,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(25) 由国家电网公司各区域网公司、省（自治区、直辖市）电力公司自行制定的信息系统事故/障碍标准是（　　）。",
+      "options": [
+        "信息系统一级、二级事故",
+        "信息系统二级、三级事故",
+        "信息系统一类、二类障碍",
+        "信息系统二类、三类障碍"
+      ],
+      "answer": 3,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(26) 上线测试通过后，各相关部门签字认可，系统即具备进入试运行条件，由信息化职能管理部门、运行维护部门、系统建设开发部门、业务主管部门共同安排（　　）个月的试运行。",
+      "options": [
+        "3.0",
+        "4.0",
+        "5.0",
+        "6.0"
+      ],
+      "answer": 0,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(27) 信息外网办公计算机的互联网访问记录要保存多长时间以上（　　）。",
+      "options": [
+        "2 个月",
+        "3个月",
+        "6个月",
+        "1年"
+      ],
+      "answer": 1,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(28) 协议是控制两个（　　）进行通信的规则集合。",
+      "options": [
+        "相邻层实体",
+        "对等层实体",
+        "同一层实体",
+        "不同层实体"
+      ],
+      "answer": 1,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(29) TCP/IP协议中，基于TCP协议的应用程序包括（　　）。",
+      "options": [
+        "ICMP",
+        "SMTP",
+        "RIP",
+        "SNMP"
+      ],
+      "answer": 1,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(3) 一个IP报文在路由器中经过一番处理后，TTL字段值变为0，将会发生以下（　　）操作。",
+      "options": [
+        "路由器向IP报文的源地址发送一个ICMP错误信息，并继续转发该报文",
+        "路由器向IP报文的源地址发送一个ICMP错误信息，并丢弃该报文",
+        "路由器继续转发报文，不发送错误信息",
+        "路由器直接丢弃该IP报文，既不转发，也不发送错误信息"
+      ],
+      "answer": 1,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(31) TCP和UDP协议通过（　　）来确定最终目的进程。",
+      "options": [
+        "IP地址",
+        "物理地址",
+        "端口号",
+        "以上答案均不对"
+      ],
+      "answer": 2,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(32) 对于10M以太网，（　　）是目前使用最广泛的以太网电缆标准。",
+      "options": [
+        "10Base5粗同轴电缆",
+        "10Base-T",
+        "10Base2细同轴电缆",
+        "10Base-FX"
+      ],
+      "answer": 1,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(33) 不能用平行双绞线跳线连接的设备对是（　　）。",
+      "options": [
+        "计算机和交换机",
+        "计算机和计算机",
+        "计算机和集线器",
+        "交换机和路由器"
+      ],
+      "answer": 1,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(34) （　　）为两次握手协议，它通过在网络上以明文的方式传递用户名及口令来对用户进行验证。",
+      "options": [
+        "IPCP",
+        "PAP",
+        "CHAP",
+        "RADIUS"
+      ],
+      "answer": 1,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(35) 下面（　　）协议用于发现设备的硬件地址。",
+      "options": [
+        "RARP",
+        "ARP",
+        "IP",
+        "ICMP"
+      ],
+      "answer": 1,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(36) 下面（　　）LAN是应用CSMA/CD协议的。",
+      "options": [
+        "令牌环",
+        "FDDI",
+        "Ethernet",
+        "NOVELL"
+      ],
+      "answer": 2,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(37) VLAN的划分不包括以下（　　）方法。",
+      "options": [
+        "基于端口",
+        "基于MAC地址",
+        "基于协议",
+        "基于物理位置"
+      ],
+      "answer": 3,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(38) IPV6地址长度为（　　）Bits。",
+      "options": [
+        "32.0",
+        "64.0",
+        "128.0",
+        "256.0"
+      ],
+      "answer": 2,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(39) 运维综合监管系统的简称是（　　）。",
+      "options": [
+        "IMS",
+        "IDS",
+        "ITS",
+        "IAS"
+      ],
+      "answer": 0,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(4) 《国家电网公司信息网络IP 地址编码规范》中规定第二个八位位组用于表示区域地址。其中编码81～254 为（　　）。",
+      "options": [
+        "网络设备互联专用",
+        "信息网使用",
+        "调度数据网使用",
+        "统一预留地址"
+      ],
+      "answer": 1,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(41) 以下（　　）标准是信息安全管理国际标准。",
+      "options": [
+        "ISO 9000-2000",
+        "SSE-CMM",
+        "ISO 27000",
+        "ISO 15408"
+      ],
+      "answer": 2,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(42) “SG186 工程”的数据中心，不包括（　　）。",
+      "options": [
+        "国家电网公司总部数据中心",
+        "区域网公司数据中心",
+        "省公司数据中心",
+        "地市县公司数据中心"
+      ],
+      "answer": 3,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(43) 以下各项中，国家电网公司经济法律部在公司软件知识产权保护工作负责的工作有（　　）。",
+      "options": [
+        "制定公司信息系统软件知识产权管理相关制度",
+        "负责会同有关部门在公司信息系统软件有关合同中明确相应软件知识产权归属",
+        "组织处理公司信息系统软件知识产权的争议和纠纷",
+        "确保不因软件升级、修改而使得软件知识产权受到侵害"
+      ],
+      "answer": 2,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(44) 国家电网公司各单位发生二级及以上的信息系统事故应在事故发生后（　　）小时内以书面材料向国家电网公司安全监察部报告，同时向信息化工作部报告。",
+      "options": [
+        "8.0",
+        "16.0",
+        "24.0",
+        "32.0"
+      ],
+      "answer": 1,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(45) 在进行安全措施评估时，对于同一个网络或系统节点，采取负载均衡方式部署的安全设备应（　　）进行评估。",
+      "options": [
+        "不再",
+        "任选一台",
+        "选取两台",
+        "全部"
+      ],
+      "answer": 2,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(46) 信息系统安全保护等级中信息系统的重要性由以下要素决定：信息系统的影响深度，信息系统的影响广度，信息的安全性，包括信息的（　　）。",
+      "options": [
+        "机密性、完整性和可用性",
+        "重要性、完整性和必要性",
+        "重要性、机密性和必要性",
+        "机密性、完整性和必要性"
+      ],
+      "answer": 0,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(47) 在试运行的初始阶段安排一定时间的观察期。观察期内由（　　）部门安排人员进行运行监视、调试、备份和记录，并提交观察期的系统运行报告。",
+      "options": [
+        "业务主管部门",
+        "系统建设开发",
+        "运行维护部门",
+        "信息职能部门"
+      ],
+      "answer": 1,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(48) 当今世界上最流行的TCP/IP协议的层次并不是按OSI参考模型来划分的，相对应于OSI 的七层网络模型，它没有定义（　　）。",
+      "options": [
+        "物理层与链路层",
+        "链路层与网络层",
+        "网络层与传输层",
+        "会话层与表示层"
+      ],
+      "answer": 3,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(49) 通信的主机之间通过（　　）来区分不同的网络会话连接。",
+      "options": [
+        "IP地址",
+        "物理地址",
+        "IP地址+端口号",
+        "以上答案均不对"
+      ],
+      "answer": 2,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(5) DHCP客户端申请一个新的IP地址之前，使用的初始IP地址是（　　）。",
+      "options": [
+        "MAC地址的前四位",
+        "0.0.0.0",
+        "127.0.0.1",
+        "255.255.255.255"
+      ],
+      "answer": 1,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(51) 下列关于双绞线的说法，正确的是（　　）。",
+      "options": [
+        "线缆越长，信号衰减越厉害",
+        "线缆越短，信号强度越弱",
+        "STP的性能好，价格低",
+        "UTP的性能好，传输距离远"
+      ],
+      "answer": 0,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(52) 一个VLAN可以看做是一个（　　）。",
+      "options": [
+        "冲突域",
+        "广播域",
+        "管理域",
+        "自治域"
+      ],
+      "answer": 1,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(53) 下列不属于以太网交换机生成树协议的是（　　）。",
+      "options": [
+        "STP",
+        "VTP",
+        "MSTP",
+        "RSTP"
+      ],
+      "answer": 1,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(54) 组播MAC地址，第六个字节的第一位为（　　）。",
+      "options": [
+        "0.0",
+        "1.0",
+        "2.0",
+        "3.0"
+      ],
+      "answer": 1,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(55) 国家电网公司信息化工作坚持“统一领导，统一规划，（　　），统一组织实施”的“四统一”原则。",
+      "options": [
+        "统一运作",
+        "统一管理",
+        "统一标准",
+        "统一设计"
+      ],
+      "answer": 2,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(56) 《国家电网公司信息网络运行管理规程（试行）》中规定，一般情况下，要求在接到故障报修后（　　）小时之内到达现场。",
+      "options": [
+        "1.0",
+        "4.0",
+        "8.0",
+        "24.0"
+      ],
+      "answer": 0,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(57) 根据《国家电网公司信息系统安全管理办法》，（　　）负责电力二次系统和通信网络的安全管理工作。",
+      "options": [
+        "生产管理部门",
+        "安全监察部门",
+        "国家电力调度通信中心",
+        "信息化管理部门"
+      ],
+      "answer": 2,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(58) 合作开发的信息系统软件，国家电网公司参与软件开发单位要按照合同约定取得整个软件相关文档、源代码、执行代码等（　　）资料。",
+      "options": [
+        "全部",
+        "自主开发部分",
+        "应用需要部分",
+        "维护需要部分"
+      ],
+      "answer": 0,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(59) 信息网骨干网网络节点接入与变更、信息业务接入与变更、通道切换、计划停运、故障处理等操作均实行（　　）制度。",
+      "options": [
+        "审批",
+        "工作单",
+        "备案",
+        "审核"
+      ],
+      "answer": 1,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(6) 安全的口令，长度不得小于（　　）位字符串，要求是字母和数字或特殊字符的混合，用户名和口令禁止相同。",
+      "options": [
+        "5.0",
+        "6.0",
+        "7.0",
+        "8.0"
+      ],
+      "answer": 3,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(61) 根据机房运行管理的规定，应（　　）进行一次信息机房运行分析会。",
+      "options": [
+        "每天",
+        "每周",
+        "每月",
+        "每年"
+      ],
+      "answer": 2,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(62) 国网公司“三个百分之百”要求是指人员百分之百、时间百分之百、（　　）。",
+      "options": [
+        "力量百分之百",
+        "精力百分之百",
+        "技术百分之百",
+        "设备百分之百"
+      ],
+      "answer": 0,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(63) 在TCP/IP网络中，传输层协议将数据传递到网络层后，封装成（　　），然后交给数据链路层处理。",
+      "options": [
+        "MAC数据帧",
+        "信元(Cell)",
+        "IP数据报",
+        "TCP报文段"
+      ],
+      "answer": 2,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(64) 以下关于单模光接口叙述错误的是（　　）。",
+      "options": [
+        "使用光束波长较短",
+        "成本较多模高",
+        "传输距离远",
+        "多使用半导体激光器件"
+      ],
+      "answer": 0,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(65) PPP协议是一种（　　）协议。",
+      "options": [
+        "应用层",
+        "传输层",
+        "网络层",
+        "数据链路层"
+      ],
+      "answer": 3,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(66) 下列关于VLAN的说法不正确的是（　　）。",
+      "options": [
+        "VLAN是用户和网络资源的逻辑划分",
+        "一个VLAN是一个链路层广播域",
+        "VLAN是一种新型的局域网",
+        "VLAN的划分与设备的物理位置无关"
+      ],
+      "answer": 2,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(67) 信息化建设实行“总体规划、（　　）、典型设计、试点先行”的工作方针。",
+      "options": [
+        "强化集约",
+        "强化整合",
+        "强化管理",
+        "强化组织"
+      ],
+      "answer": 1,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(68) 《国家电网公司统一域名系统建设规范》中规定系统内部域名结构为x.y.z.sgcc.com.cn，其中（　　）。",
+      "options": [
+        "z 代表区域电网公司、省（自治区、直辖市）电力公司或直属单位，y 代表地市供电\n企业或网省公司直属单位，x 代表主机名。",
+        "x 代表区域电网公司、省（自治区、直辖市）电力公司或直属单位，y 代表地市供电\n企业或网省公司直属单位，z 代表主机名。",
+        "y 代表区域电网公司、省（自治区、直辖市）电力公司或直属单位，z 代表地市供电\n企业或网省公司直属单位，x 代表主机名。",
+        "y 代表区域电网公司、省（自治区、直辖市）电力公司或直属单位，x 代表地市供电\n企业或网省公司直属单位，z 代表主机名。"
+      ],
+      "answer": 0,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(69) 国家电网公司信息化“3E”对标指标体系中的指标按性质分为对标指标和（　　）。",
+      "options": [
+        "月度指标",
+        "季度指标",
+        "年度指标",
+        "基本信息"
+      ],
+      "answer": 3,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(7) 管理信息系统实用化评价的基本条件之一是，系统建成并验收合格，正式投运后已连续稳定运行（　　）以上，系统运行完好率不低于98%。",
+      "options": [
+        "半年",
+        "一年",
+        "二年",
+        "三年"
+      ],
+      "answer": 0,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(71) 根据《国家电网公司信息系统事故调查及统计规定》要求，各单位信息管理部门对各类突发事件的影响进行初步判断，有可能是一级事件的，须在（　　）分钟内向公司信息化工作部进行紧急报告。",
+      "options": [
+        "30",
+        "40",
+        "50",
+        "60"
+      ],
+      "answer": 0,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(72) IP报文头中固定长度部分为（　　）节。",
+      "options": [
+        "10.0",
+        "20.0",
+        "30.0",
+        "40.0"
+      ],
+      "answer": 1,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(73) 对于运行BGP4的路由器，下面说法错误的是（　　）。",
+      "options": [
+        "多条路径时，只选最优的给自己使用",
+        "从EBGP获得的路由会向它所有BGP相邻体通告",
+        "只把自己使用的路由通告给BGP相邻体",
+        "从IBGP获得的路由会向它的所有BGP相邻体通告"
+      ],
+      "answer": 3,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(74) 如下（　　）BGP属性是公认必遵属性。",
+      "options": [
+        "Next_hop属性",
+        "MED属性",
+        "Community属性",
+        "Local-preference属性"
+      ],
+      "answer": 0,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(75) 下面网络层攻击中属于IP欺骗攻击的包括（　　）。",
+      "options": [
+        "TFN",
+        "Smurf",
+        "SYN-Flood",
+        "DOS"
+      ],
+      "answer": 1,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(76) 网络管理员应该使用（　　）ACL在每天的使用高峰期限制Internet流量。",
+      "options": [
+        "动态",
+        "基于策略",
+        "自反",
+        "基于时间"
+      ],
+      "answer": 3,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(77) SYN FLOOD攻击是通过以下（　　）协议完成的。",
+      "options": [
+        "UDP",
+        "TCP",
+        "IPX/SPX",
+        "AppleTalk"
+      ],
+      "answer": 1,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(78) 拒绝服务攻击损害了信息系统的（　　）性能。",
+      "options": [
+        "完整性",
+        "可用性",
+        "保密性",
+        "可靠性"
+      ],
+      "answer": 1,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(79) 某台运行BGP协议的路由器收到一条BGP路由后，如果发现自己的AS号出现在AS-Path里（该路由的其它属性正确），则（　　）。",
+      "options": [
+        "丢弃该路由",
+        "该路由按照正常的路由来处理",
+        "将AS-Path中自己的AS号去掉后，按照正常的路由来处理",
+        "丢弃该路由，并发送Notification报文通知发送该条路由的邻居"
+      ],
+      "answer": 0,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(8) 关于防火墙的功能，说法错误的是（　　）。",
+      "options": [
+        "所有进出网络的通信流必须经过防火墙",
+        "所有进出网络的通信流必须有安全策略的确认和授权",
+        "防火墙能保护站点不被任意连接",
+        "防火墙可以代替防病毒软件"
+      ],
+      "answer": 3,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(81) 从目前的情况看，对所有的计算机系统来说，以下（　　）威胁是最为严重的，可能造成巨大的损害。",
+      "options": [
+        "没有充分训练或粗心的用户",
+        "分包商和承包商",
+        "Hackers和Crackers",
+        "心怀不满的雇员"
+      ],
+      "answer": 3,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(82) 下列关于PPPoE的说法正确的是（　　）。",
+      "options": [
+        "PPPoE协议将以太网帧封装在PPP报文之内，提供点对点的连",
+        "PPPoE协议分为三个不同阶段：Discovery阶段、Offer阶段和PPP Session阶段",
+        "PPPoE与PPP协议不同的是，PPPoE的Discovery阶段建立的是一种Client/Server关系，而PPP建立的是一种对等关系。通过Discovery阶段，一个主机（Client）可以发现一个接入集中器（Server），在Discovery阶段正常结束后，主机和接入集中器就可以通过MAC地址和会话标识来建立PPPoE会话",
+        "PPPoE和PPP的协商过程完全不同"
+      ],
+      "answer": 2,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(83) 下列关于现代交换网络中的VLAN和IP子网之间的对应关系，描述最准确的是（　　）。",
+      "options": [
+        "一个IP子网可以对应多个VLAN",
+        "一个VLAN可以对应多个IP子网",
+        "两个IP子网对应一个VLAN",
+        "一个IP子网对应一个VLAN"
+      ],
+      "answer": 3,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(84) 两个路由器的BGP邻居关系完全建立后，他们的邻居关系应该维持在（　　）状态。",
+      "options": [
+        "Initial",
+        "Active",
+        "Establish",
+        "Nonegotation"
+      ],
+      "answer": 2,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(85) IS-IS是支持分层次的IGP，那么IS-IS路由协议层次之间的边界是（　　）部署的。",
+      "options": [
+        "IS-IS路由协议的不同分层的边界是部署在互联不同层次路由器之间的链路上",
+        "IS-IS路由协议的不同分层的边界是部署Level 1 路由器上",
+        "IS-IS路由协议的不同分层的边界是部署Level 2 路由器上",
+        "IS-IS路由协议的不同分层的边界是部署Level 1/2 路由器上"
+      ],
+      "answer": 0,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(86) 交换机上每个接口的流量属于哪一个队列，其依据是（　　）。",
+      "options": [
+        "CoS值",
+        "端口号",
+        "流序号",
+        "以上都不对"
+      ],
+      "answer": 0,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(87) 在SNMP术语中通常被称为管理信息库是（　　）。",
+      "options": [
+        "MIB",
+        "SQLserve",
+        "InformationBase",
+        "Oracle"
+      ],
+      "answer": 0,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(88) 下面不属于IP报文头内容的是（　　）。",
+      "options": [
+        "TTL",
+        "TOS",
+        "DF",
+        "AS－Path"
+      ],
+      "answer": 3,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(89) TCP建立连接和关闭连接的三次握手过程中报文段使用的标志位分别为（　　）。",
+      "options": [
+        "URG和ACK",
+        "PSH和RST",
+        "SYN和RST",
+        "SYN和FIN"
+      ],
+      "answer": 3,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(9) STP的基本原理是通过在交换机之间传递一种特殊的协议报文来确定网络的拓扑结构，（　　）协议将这种协议报文称为“配置报文”。",
+      "options": [
+        "802.1B",
+        "802.1D",
+        "802.1P",
+        "802.1Q"
+      ],
+      "answer": 1,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(91) 关于BGP，下列说法正确的是（　　）。",
+      "options": [
+        "BGP是用在自治系统内部以及自治系统之间承载并控制路由信息的",
+        "BGP是用在自治系统内部发现路径的",
+        "BGP是直接承载在IP报文里的",
+        "BGP必须基于直联链路来建立对等关系"
+      ],
+      "answer": 0,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(92) 简单流分类实现外部优先级和内部优先级之间的映射。根据IP 报文的DSCP域值、MPLS 报文的（　　）域值、VLAN 报文的802.1P 值对报文进行分类，建立不同网络间报文优先级的映射关系。",
+      "options": [
+        "EXP",
+        "LABEL",
+        "TTL",
+        "Stack"
+      ],
+      "answer": 0,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(93) 在SNMP术语中通常被称为管理信息库是（　　）。",
+      "options": [
+        "MIB",
+        "SQLserve",
+        "InformationBase",
+        "Oracle"
+      ],
+      "answer": 0,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(94) 以下不属于传输层功能的是（　　）。",
+      "options": [
+        "通过序列号和确认来提供可靠性",
+        "将上层应用分段",
+        "描述网络拓扑结构",
+        "建立端到端的操作"
+      ],
+      "answer": 2,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(95) 当主机发送ARP 请求时，启动了VRRP 协议的（　　）来进行回应。",
+      "options": [
+        "Master 网关用自己的物理MAC",
+        "Master 网关用虚拟MAC",
+        "Slave 网关用自己的物理MAC",
+        "Slave 网关用虚拟MAC"
+      ],
+      "answer": 1,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(96) 下面（　　）不是描述TCP/IP协议栈的。",
+      "options": [
+        "它精确地映射了OSI参考模型的上层",
+        "它支持标准的物理层和数据链路层协议",
+        "它的数据包按顺序传递信息",
+        "它在接收端将数据包组装成完整的消息"
+      ],
+      "answer": 0,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(97) 有三个子网 172.16.12.0/24,172.16.13.0/24,172.16.14.0/24。将它们聚合为（　　）。",
+      "options": [
+        "172.16.0.0/24",
+        "172.16.14.0/24",
+        "172.16.12.0/22",
+        "172.16.14.0/22"
+      ],
+      "answer": 2,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(98) 一个三层交换机收到数据包后首先进行的操作是（　　）。",
+      "options": [
+        "发送ARP请求",
+        "上送ARP查找路由表获得下一跳地址",
+        "根据数据报文中的目的MAC地址查找MAC地址表",
+        "用自己的MAC地址替换数据报文的目的MAC地址"
+      ],
+      "answer": 2,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(99) 局域网需要MPLS VPN 的主要原因是（　　）。",
+      "options": [
+        "为提高交换速度",
+        "实现基于网络层的访问控制隔离",
+        "实现VPN加密",
+        "降低网络管理复杂度"
+      ],
+      "answer": 1,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(1) 在报文出队的时候，（　　）首先让高优先队列中的报文出队并发送，只要高优先级队列有报文，就一直从高优先级队列取报文。直到高优先队列中的报文发送完，然后才发送中优先队列中的报文，同样，直到发送完，然后依次是正常优先队列和低优先队列。",
+      "options": [
+        "PQ",
+        "WFQ",
+        "FIFO",
+        "CQ"
+      ],
+      "answer": 0,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(101) 访问列表192.168.10.16/0.0.0.15对应的子网范围是（　　）。",
+      "options": [
+        "0－15",
+        "0－16",
+        "0－31",
+        "16－31"
+      ],
+      "answer": 3,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(102) 如果ARP表没有目的地址的MAC地址表项，源站（　　）找到目的MAC地址。",
+      "options": [
+        "查找路由表",
+        "向全网发送一个广播请求",
+        "向整个子网发送一个广播请求",
+        "以上说法都不对"
+      ],
+      "answer": 2,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(103) BGP动态路由协议包含四种消息，下面（　　）消息不在其内。",
+      "options": [
+        "Open Message",
+        "Close Message",
+        "Notification Message",
+        "Keepalive Message"
+      ],
+      "answer": 1,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(104) 下列（　　）OSPF报文中会出现完整的LSA信息。",
+      "options": [
+        "HELLO报文（Hello Packet）",
+        "DD报文（Database Description Packet）",
+        "LSR报文（Link State Request Packet）",
+        "LSU报文（Link State Update Packet）"
+      ],
+      "answer": 3,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(105) 在距离矢量路由协议中，老化机制作用于（　　）。",
+      "options": [
+        "直接相邻的路由器的路由信息",
+        "所有路由器的路由信息",
+        "优先级低的路由器的路由信息",
+        "优先级高的路由器的路由信息"
+      ],
+      "answer": 1,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(106) 在LDP的标签控制方式中的有序方式是指（　　）。",
+      "options": [
+        "除非LSR是路由的始发节点，否则LSR必须等收到下一跳的标记映射才能向上游发出标记映射",
+        "LSR可以向上游发出标记映射，而不必等待来自LSR下一跳的标记映射消息",
+        "保留来自邻居的所有发送来的标签",
+        "只保留来自下一跳邻居的标签，丢弃所有非下一跳邻居发来的标签"
+      ],
+      "answer": 0,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(107) 通常，MPLS包头中有（　　）Bit用作标签（Label）；3个Bit的EXP, 协议中没有明确，通常用作COS；1个Bit的S,用于标识是否是栈底，表明MPLS的标签可以嵌套；8个Bit的TTL。",
+      "options": [
+        "18.0",
+        "19.0",
+        "20.0",
+        "21.0"
+      ],
+      "answer": 2,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(108) 对于QoS技术的应用，边缘路由器和核心路由器的操作是不一样的。在通常情况下，边缘路由器执行（　　）。",
+      "options": [
+        "拥塞管理",
+        "拥塞避免",
+        "数据包分类和标记",
+        "以上都不对"
+      ],
+      "answer": 2,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(109) 主机地址10.10.10.10/255.255.254.0的广播地址是（　　）。",
+      "options": [
+        "10.10.10.255",
+        "10.10.11.255",
+        "10.10.255.255",
+        "10.255.255.255"
+      ],
+      "answer": 1,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(11) （　　）按顺序包括了 OSI 模型的各个层次。",
+      "options": [
+        "物理层，数据链路层，网络层，传输层，会话层，表示层和应用层",
+        "物理层，数据链路层，网络层，传输层，系统层，表示层和应用层",
+        "物理层，数据链路层，网络层，转换层，会话后，表示层和应用层",
+        "表示层，数据链路层，网络层，传输层，会话层，物理层和应用层"
+      ],
+      "answer": 0,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(111) （　　）是外部网关路由协议。",
+      "options": [
+        "RIP",
+        "OSPF",
+        "IGP",
+        "BGP"
+      ],
+      "answer": 3,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(112) 10.1.1.225/29 的广播地址是（　　）。",
+      "options": [
+        "10.1.1.223",
+        "10.1.1.224",
+        "10.1.1.231",
+        "10.1.1.232"
+      ],
+      "answer": 2,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(113) 802.1D中规定了 Disabled 端口状态，此状态的端口具有的功能是（　　）。",
+      "options": [
+        "不收发任何报文",
+        "不接收或转发数据，接收但不发送 BPDU，不进行地址学习",
+        "不接收或转发数据，接收并发送 BPDU，不进行地址学习",
+        "不接收或转发数据，接收并发送 BPDU，开始地址学习"
+      ],
+      "answer": 0,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(114) IEEE组织制定了（　　）标准，规范了跨交换机实现VLAN的方法。",
+      "options": [
+        "ISL",
+        "VLT",
+        "802.1q",
+        "null"
+      ],
+      "answer": 2,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(115) IPSec  协议是开放的 VPN 协议，对它的描述有误的是（　　）。",
+      "options": [
+        "适应于向 IPv6 迁移",
+        "提供在网络层上的数据加密保护",
+        "可以适应设备动态 IP 地址的情况",
+        "支持除 TCP/IP 外的其他协议"
+      ],
+      "answer": 3,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(116) IP 路由发生在（　　）。",
+      "options": [
+        "物理层",
+        "数据链路层",
+        "网络层",
+        "传输层"
+      ],
+      "answer": 2,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(117) IS-IS 分为（　　）拓扑结构。",
+      "options": [
+        "2 层",
+        "3 层",
+        "4 层",
+        "5 层"
+      ],
+      "answer": 0,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(118) ISO提出OSI的关键是（　　）。",
+      "options": [
+        "系统互联",
+        "提高网络速度",
+        "为计算机制定标准",
+        "经济利益"
+      ],
+      "answer": 0,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(119) LAN 在基于广播的以太网中，所有的工作站的数据链路层都可以接收发送到网上的（　　）。",
+      "options": [
+        "电信号",
+        "比特流",
+        "广播帧",
+        "数据包"
+      ],
+      "answer": 1,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(12) OSI参考模型的物理层中没有定义（　　）。",
+      "options": [
+        "硬件地址",
+        "位传输",
+        "电平",
+        "物理接口"
+      ],
+      "answer": 0,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(121) OSPF 协议使用（　　）报文来保持与其邻居的连接。",
+      "options": [
+        "Hello",
+        "Keep-alive",
+        "SPF",
+        "LSU"
+      ],
+      "answer": 0,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(122) OSPF 协议中，NBMA 和 point-to-multipoint  网络类型的主要区别是（　　）。",
+      "options": [
+        "NBMA 不支持广播，而 point-to-multipoint  可以",
+        "NBMA 可以提供多点访问，而 point-to-multipoint 不可以",
+        "NBMA 是基于帧中继协议的，而 point-to-multipoint 只用在 PPP 协议中",
+        "NBMA 要求网络是 full-meshed，而 point-to-multipoint 不要求"
+      ],
+      "answer": 3,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(123) RIP 协议的路由项在（　　）时间内没有更新会变为不可达。",
+      "options": [
+        "90s",
+        "120s",
+        "180s",
+        "240s"
+      ],
+      "answer": 2,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(124) SNMP 协议的直接下层协议是（　　）。",
+      "options": [
+        "UDP",
+        "ICMP",
+        "TCP",
+        "IP"
+      ],
+      "answer": 0,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(125) TCP 是互联网中的传输层协议，使用（　　）次握手协议建立连接。这种建立连接的 方法可以防止产生错的连接。",
+      "options": [
+        "1",
+        "2",
+        "3",
+        "4"
+      ],
+      "answer": 2,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(126) TCP/IP 协议分为四层，分别为应用层、传输层、网络层和网络接口层。下面不属于 应用层协议的是（　　）。",
+      "options": [
+        "SNMP",
+        "UDP",
+        "TELNET",
+        "FTP"
+      ],
+      "answer": 1,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(127) TFTP服务默认端口号是（　　）。",
+      "options": [
+        "23",
+        "48",
+        "53",
+        "69"
+      ],
+      "answer": 3,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(128) VLANtag在OSI参考模型的（　　）实现。",
+      "options": [
+        "物理层",
+        "数据链路层",
+        "网络层",
+        "应用层"
+      ],
+      "answer": 1,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(129) VLAN的划分不包括以下（　　）方法。",
+      "options": [
+        "基于端口",
+        "基于MAC地址",
+        "基于协议",
+        "基于物理位置"
+      ],
+      "answer": 3,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(13) 保留给自环测试的 IP 地址段是（　　）。",
+      "options": [
+        "164.0.0.0",
+        "130.0.0.0",
+        "200.0.0.0",
+        "127.0.0.0"
+      ],
+      "answer": 3,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(131) 从整个 Internet 的观点出发，有效减少路由表的规模的是（　　）。",
+      "options": [
+        "增加动态路由的更新频率",
+        "使用路由过滤策略",
+        "划分 VLAN",
+        "路由聚合"
+      ],
+      "answer": 3,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(132) 带有802.1Q标记的以太网帧格式中VLANID占（　　）bit。",
+      "options": [
+        "8",
+        "10",
+        "12",
+        "14"
+      ],
+      "answer": 2,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(133) 当部署 QoS 时，对数据流的复杂分类通常部署在网络中的（　　）部分。",
+      "options": [
+        "边缘接入层",
+        "核心层",
+        "汇聚层",
+        "数据链路层"
+      ],
+      "answer": 0,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(134) 当路由器接收的 IP 报文的 TTL 值等于 1 时，采取的策略是（　　）。",
+      "options": [
+        "丢掉该分组",
+        "将该分组分片",
+        "转发该分组",
+        "以上答案均不对"
+      ],
+      "answer": 2,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(135) 当路由器接收的IP报文的MTU大于该路由器的最大MTU时，采取的策略是（　　）。",
+      "options": [
+        "丢掉该分组",
+        "将该分组分片",
+        "向源路由器发出请求，减少其分组大小",
+        "直接转发该分组"
+      ],
+      "answer": 1,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(136) 系统试运行初始阶段的观察期内由（　　）部门安排人员进行运行监视、调试、备份和记录。",
+      "options": [
+        "业务部门",
+        "运行维护部门",
+        "信息化管理职能部门",
+        "系统建设开发部门"
+      ],
+      "answer": 3,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(137) 系统管理员口令修改间隔不得超过（　　）个月。",
+      "options": [
+        "1.0",
+        "2.0",
+        "3.0",
+        "6.0"
+      ],
+      "answer": 2,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(138) 根据GB/T17859，计算机系统安全保护能力不包括如下（　　）等级。",
+      "options": [
+        "用户自主保护级",
+        "强制保护级",
+        "结构化保护级",
+        "访问验证保护级"
+      ],
+      "answer": 1,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(139) 《国家电网公司信息机房设计及建设规范》规定UPS供电时间最小不少于（　　）。",
+      "options": [
+        "1小时",
+        "2小时",
+        "100分钟",
+        "90分钟"
+      ],
+      "answer": 1,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(14) 根据《国家电网公司保密工作责任书》，以下（　　）内容是不正确的。",
+      "options": [
+        "不将涉密计算机与公司内网、外网和互联网进行连接",
+        "不在公司内网、外网和互联网存储、处理、传递国家秘密；不在公司外网和互联网存储、处理、传递公司秘密",
+        "不将非涉密计算机、多功能一体机、打印机和扫描仪等设备在公司内网、外网和互联网交叉连接使用",
+        "普通移动存储介质可在公司信息内网、外网和互联网间交叉使用"
+      ],
+      "answer": 3,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(141) 在国家信息安全等级保护制度中，信息系统的安全等级共被划分为（　　）个安全等级。",
+      "options": [
+        "2.0",
+        "3.0",
+        "4.0",
+        "5.0"
+      ],
+      "answer": 3,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(142) 根据《国家电网公司信息系统事故调查及统计规定》要求，各单位信息管理部门对各类突发事件的影响进行初步判断，有可能是一级事件的，须在（　　）内向公司信息化工作部进行紧急报告。",
+      "options": [
+        "30分钟",
+        "40分钟",
+        "50分钟",
+        "60分钟"
+      ],
+      "answer": 0,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(143) 信息机房各种记录至少应保存（　　）。",
+      "options": [
+        "半年",
+        "一年",
+        "两年",
+        "长期"
+      ],
+      "answer": 1,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(144) 信息机房应设事故照明，其照度在距地面0.8m处不应低于（　　）勒。",
+      "options": [
+        "1.1",
+        "3.1",
+        "5.1",
+        "7.1"
+      ],
+      "answer": 2,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(145) 信息系统在风险评估实施过程中必须符合“（　　）票”制。",
+      "options": [
+        "1.0",
+        "2.0",
+        "3.0",
+        "4.0"
+      ],
+      "answer": 1,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(146) 《国网公司信息安全与运维管理制度和技术标准》第二条规定计算机病毒防治工作按照 “安全第一、预防为主，（　　），综合防范”的工作原则规范地开展。",
+      "options": [
+        "谁主管、谁负责",
+        "谁运营、谁负责",
+        "管理和技术并重",
+        "抓防并举"
+      ],
+      "answer": 2,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(147) 以下关于距离矢量路由协议描述中错误的是（　　）。",
+      "options": [
+        "简单，易管理",
+        "收敛速度快",
+        "报文量大",
+        "为避免路由环做特殊处理"
+      ],
+      "answer": 1,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(148) 以下（　　）路由必须要由网络管理员手动配置。",
+      "options": [
+        "静态路由",
+        "直连路由",
+        "缺省路由",
+        "动态路由"
+      ],
+      "answer": 0,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(149) 以下协议中支持可变长子网掩码（VLSM）和路由汇聚功能（Route ummarization）的是（　　）。",
+      "options": [
+        "IGRP",
+        "OSPF",
+        "VTP",
+        "RIPv1"
+      ],
+      "answer": 1,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(15) 应用程序PING发出的是（　　）报文。",
+      "options": [
+        "TCP请求报文",
+        "TCP应答报文",
+        "ICMP请求报文",
+        "ICMP应答报文"
+      ],
+      "answer": 2,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(151) 在 OSPF 协议计算出的路由中，（　　）路由的优先级最低。",
+      "options": [
+        "区域内路由",
+        "区域间路由",
+        "第一类外部路由",
+        "第二类外部路由"
+      ],
+      "answer": 3,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(152) 在 SNMP 术语中通常被称为管理信息库是（　　）。",
+      "options": [
+        "MIB",
+        "SQL server",
+        "Information Base",
+        "Oracle"
+      ],
+      "answer": 0,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(153) 在ISO定义的七层参考模型中，对数据链路层的描述正确的是（　　）。",
+      "options": [
+        "实现数据传输所需要的机械，接口，电气等属性",
+        "实施流量监控，错误检测，链路管理，物理寻址",
+        "检查网络拓扑结构，进行路由选择和报文转发",
+        "提供应用软件的接口"
+      ],
+      "answer": 1,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(154) 在MPLSVPN技术中，下列关于CE说法不正确的有（　　）。",
+      "options": [
+        "用户网络边缘设备，有接口直接与服务提供商SP（ServiceProvider）网络相连",
+        "CE可以是路由器或交换机，也可以是一台主机",
+        "CE“感知”不到VPN的存在",
+        "需要支持MPLS"
+      ],
+      "answer": 3,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(155) 在STP协议中，当网桥的优先级一致时，以下（　　）将被选为根桥。",
+      "options": [
+        "拥有最小MAC地址的网桥",
+        "拥有最大MAC地址的网桥",
+        "端口优先级数值最高的网桥",
+        "端口优先级数值最低的网桥"
+      ],
+      "answer": 0,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(156) 在TCP/IP协议栈中，下面（　　）能够唯一地确定一个TCP连接。",
+      "options": [
+        "源IP地址和源端口号",
+        "源IP地址和目的端口号",
+        "目的地址和源端口号",
+        "源地址、目的地址、源端口号和目的端口号"
+      ],
+      "answer": 3,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(157) 在同一信道上同一时刻，可进行双向数据传送的通信方式是（　　）。",
+      "options": [
+        "单工",
+        "半双工",
+        "全双工",
+        "上述三种均不是"
+      ],
+      "answer": 2,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(158) OSPF协议中，在同一区域（区域A）内，下列说法正确的是（　　） 。",
+      "options": [
+        "每台路由器生成的LSA都是相同的",
+        "每台路由器的区域A的LSDB(链路状态数据库)都是相同的",
+        "每台路由器根据该LSDB计算出的最短路径树都是相同的",
+        "每台路由器根据该最短路径树计算出的路由都是相同的"
+      ],
+      "answer": 1,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(159) BGP路由协议是基于TCP的，它的端口号是（　　）。",
+      "options": [
+        "179",
+        "520",
+        "89",
+        "4"
+      ],
+      "answer": 0,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(16) BGP是在（　　）之间传播路由的协议。",
+      "options": [
+        "主机",
+        "子网",
+        "区域（are）",
+        "自治系统（AS）"
+      ],
+      "answer": 3,
+      "explanation": ""
+    },
+    {
+      "type": "single",
+      "question": "(161) DNS的作用是（　　）。",
+      "options": [
+        "为客户机分配IP地址",
+        "访问HTTP的应用程序",
+        "将计算机名翻译为IP地址",
+        "将MAC地址翻译为IP地址"
+      ],
+      "answer": 2,
+      "explanation": ""
+    }
+  ]
+}

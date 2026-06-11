@@ -43,12 +43,15 @@
 
     /* ===== App Shell ===== */
     #app {
-      width: 100%; max-width: 480px; height: 100%; display: flex; flex-direction: column;
+      width: 100%; max-width: 960px; height: 100%; display: flex; flex-direction: column;
       background: var(--c-bg); position: relative; overflow: hidden;
       box-shadow: var(--shadow-lg);
     }
     @media (min-width: 481px) {
-      #app { height: min(100%, 900px); border-radius: 20px; margin: 16px; }
+      #app { height: min(100%, 900px); border-radius: 20px; margin: 16px auto; }
+    }
+    @media (min-width: 769px) {
+      #app { height: min(100%, 960px); }
     }
 
     /* ===== Header ===== */
@@ -214,6 +217,16 @@
     }
     .fill-input:focus { border-color: var(--c-primary); box-shadow: 0 0 0 3px var(--c-primary-light); }
 
+    /* ===== Scrollable Quiz ===== */
+    .quiz-q-card {
+      background: var(--c-surface); border-radius: var(--radius); padding: 18px;
+      box-shadow: var(--shadow-sm); border: 1px solid var(--c-border); margin-bottom: 14px;
+    }
+    .q-card-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+    .q-card-num { font-size: 13px; color: var(--c-text-secondary); font-weight: 500; }
+    .quiz-submit-bar { padding: 12px 0 8px; position: sticky; bottom: 0; background: var(--c-bg); }
+    .quiz-submit-bar .btn { min-height: 52px; font-size: 16px; }
+
     /* ===== Registration ===== */
     .form-group input[type=text] {
       padding: 12px 14px; border: 1px solid var(--c-border); border-radius: var(--radius-sm);
@@ -334,6 +347,46 @@
 
     /* ===== Hint ===== */
     .hint { font-size: 12px; color: var(--c-text-muted); margin-top: 4px; }
+
+    /* ===== Tablet & Desktop ===== */
+    @media (min-width: 600px) {
+      .app-main { padding: 20px 24px calc(20px + var(--safe-bottom)); }
+      .screen { gap: 20px; }
+      .quiz-options { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+      .option-btn { padding: 16px 18px; }
+      .quiz-question-card { padding: 24px; }
+      .question-text { font-size: 17px; }
+      .result-stats { gap: 16px; }
+      .stat-item { padding: 20px 12px; }
+      .stat-item .stat-num { font-size: 28px; }
+      .card { padding: 22px; }
+      .bank-item { padding: 18px; }
+    }
+
+    @media (min-width: 768px) {
+      .app-header { padding: 16px 28px; }
+      .app-header h1 { font-size: 22px; }
+      /* Records grid */
+      #records-list { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+      /* Setup form wider */
+      .setup-form { max-width: 560px; margin: 0 auto; }
+      /* Result card wider */
+      .result-card { max-width: 500px; margin: 0 auto; padding: 36px 28px; }
+      .score-circle { width: 160px; height: 160px; }
+      .score-circle .score-num { font-size: 42px; }
+      /* Review items 2-column */
+      #review-list { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+      /* Bank list 2-column */
+      #bank-list { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+      /* Home records card */
+      #home-records-card { grid-column: 1 / -1; }
+    }
+
+    @media (min-width: 900px) {
+      #review-list { grid-template-columns: 1fr 1fr 1fr; }
+      #bank-list { grid-template-columns: 1fr 1fr 1fr; }
+      #records-list { grid-template-columns: 1fr 1fr 1fr; }
+    }
   </style>
 </head>
 <body>
@@ -379,13 +432,19 @@
           <select id="setup-bank-select"></select>
         </div>
         <div class="form-group">
-          <label>题目数量</label>
-          <input type="number" id="setup-count" min="1" value="10" placeholder="输入题目数量">
-          <span class="hint" id="setup-count-hint"></span>
+          <label>单选题数量</label>
+          <input type="number" id="setup-single-count" min="0" value="5" placeholder="单选题数量">
+          <span class="hint" id="setup-single-hint"></span>
         </div>
-        <div class="toggle-row">
-          <span>随机打乱题目顺序</span>
-          <div class="toggle on" id="setup-shuffle"></div>
+        <div class="form-group">
+          <label>判断题数量</label>
+          <input type="number" id="setup-tf-count" min="0" value="3" placeholder="判断题数量">
+          <span class="hint" id="setup-tf-hint"></span>
+        </div>
+        <div class="form-group">
+          <label>多选题数量</label>
+          <input type="number" id="setup-multi-count" min="0" value="2" placeholder="多选题数量">
+          <span class="hint" id="setup-multi-hint"></span>
         </div>
         <button class="btn btn-primary btn-block mt-8" id="btn-start-quiz">开始考试</button>
       </div>
@@ -410,20 +469,9 @@
 
     <!-- Quiz Screen -->
     <div class="screen" id="screen-quiz">
-      <div class="quiz-top">
-        <div class="quiz-meta">
-          <span>第 <span class="q-num" id="q-current">1</span> / <span id="q-total">10</span> 题</span>
-          <span class="text-muted" id="q-type-label">单选题</span>
-        </div>
-        <div class="progress-bar">
-          <div class="progress-fill" id="quiz-progress" style="width: 0%"></div>
-        </div>
-      </div>
-      <div class="quiz-question-card" id="quiz-question-card"></div>
-      <div class="quiz-nav">
-        <button class="btn btn-outline btn-sm hidden" id="btn-prev">上一题</button>
-        <button class="btn btn-primary flex-1" id="btn-next">下一题</button>
-        <button class="btn btn-success hidden" id="btn-submit">交卷</button>
+      <div id="quiz-questions-container"></div>
+      <div class="quiz-submit-bar">
+        <button class="btn btn-success btn-block" id="btn-submit">📝 交卷</button>
       </div>
     </div>
 
@@ -477,8 +525,8 @@
         <div class="import-panel" id="panel-file">
           <label class="file-upload-area" id="file-upload-area">
             <span class="upload-icon">📂</span>
-            <p>点击选择 .json 文件</p>
-            <input type="file" accept=".json" id="file-input">
+            <p>点击选择 .json / .xls / .xlsx 文件</p>
+            <input type="file" accept=".json,.xls,.xlsx" id="file-input" multiple>
           </label>
           <p class="text-center text-muted mt-8" id="file-name" style="font-size:13px"></p>
         </div>
@@ -552,12 +600,27 @@ function shuffle(arr) {
 
 // ===== Quiz Engine =====
 class QuizEngine {
-  constructor(questions, count, shuffleQuestions = true) {
-    const pool = shuffleQuestions ? shuffle(questions) : [...questions];
-    this.questions = pool.slice(0, Math.min(count, pool.length));
+  constructor(questions) {
+    this.questions = questions;
     this.currentIndex = 0;
     this.answers = new Array(this.questions.length).fill(null);
-    // null = unanswered, for multiple: Set, for others: value
+  }
+
+  static fromTypes(allQuestions, singleCount, tfCount, multiCount) {
+    // Group by type
+    const groups = { single: [], truefalse: [], multiple: [] };
+    allQuestions.forEach(q => {
+      const t = q.type || 'single';
+      if (groups[t]) groups[t].push(q);
+    });
+    // Shuffle each group internally, pick requested count
+    const selected = [];
+    ['single', 'truefalse', 'multiple'].forEach(type => {
+      const pool = shuffle(groups[type]);
+      const count = type === 'single' ? singleCount : type === 'truefalse' ? tfCount : multiCount;
+      selected.push(...pool.slice(0, count));
+    });
+    return new QuizEngine(selected);
   }
 
   get total() { return this.questions.length; }
@@ -757,15 +820,34 @@ function importBank(bankData) {
   }
 
   const banks = loadBanks();
-  banks.push({
-    id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
-    name: bankData.name,
-    description: bankData.description || '',
-    questions: bankData.questions,
-    importedAt: new Date().toISOString(),
-  });
-  saveBanks(banks);
-  showToast(`题库「${bankData.name}」导入成功！(${bankData.questions.length} 题)`, 'success');
+  const masterName = '题库汇总';
+  let master = banks.find(b => b.name === masterName);
+
+  if (master) {
+    // Merge into existing master bank, skip duplicates
+    const existingTexts = new Set(master.questions.map(q => q.question));
+    const newQuestions = bankData.questions.filter(q => !existingTexts.has(q.question));
+    if (newQuestions.length === 0) {
+      showToast('题库已包含这些题目，无新增', 'error');
+      renderBankList();
+      return false;
+    }
+    master.questions.push(...newQuestions);
+    master.description = `共 ${master.questions.length} 题`;
+    saveBanks(banks);
+    showToast(`已合并到「题库汇总」！+${newQuestions.length} 题（总计 ${master.questions.length} 题）`, 'success');
+  } else {
+    // Create master bank
+    banks.push({
+      id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
+      name: masterName,
+      description: `共 ${bankData.questions.length} 题`,
+      questions: bankData.questions,
+      importedAt: new Date().toISOString(),
+    });
+    saveBanks(banks);
+    showToast(`创建「题库汇总」！(${bankData.questions.length} 题)`, 'success');
+  }
   renderBankList();
   return true;
 }
@@ -802,6 +884,12 @@ function deleteBank(index) {
 }
 
 // ===== Setup Screen =====
+function countByType(questions) {
+  const c = { single: 0, truefalse: 0, multiple: 0, fill: 0 };
+  questions.forEach(q => { const t = q.type || 'single'; c[t] = (c[t] || 0) + 1; });
+  return c;
+}
+
 function openSetup(bankIndex) {
   const banks = loadBanks();
   if (bankIndex < 0 || bankIndex >= banks.length) return;
@@ -810,17 +898,24 @@ function openSetup(bankIndex) {
   const select = document.getElementById('setup-bank-select');
   select.innerHTML = banks.map((b, i) => `<option value="${i}" ${i === bankIndex ? 'selected' : ''}>${escapeHtml(b.name || '未命名')} (${b.questions.length}题)</option>`).join('');
 
-  document.getElementById('setup-count').value = Math.min(10, bank.questions.length);
-  document.getElementById('setup-count').max = bank.questions.length;
-  document.getElementById('setup-count-hint').textContent = `该题库共 ${bank.questions.length} 题`;
+  const updateHints = (b) => {
+    const counts = countByType(b.questions);
+    const setField = (id, hintId, max) => {
+      const el = document.getElementById(id);
+      el.max = max;
+      el.value = Math.min(parseInt(el.value) || 0, max);
+      document.getElementById(hintId).textContent = `该题库共 ${max} 题`;
+    };
+    setField('setup-single-count', 'setup-single-hint', counts.single || 0);
+    setField('setup-tf-count', 'setup-tf-hint', counts.truefalse || 0);
+    setField('setup-multi-count', 'setup-multi-hint', counts.multiple || 0);
+  };
 
-  // Update count hint when bank changes
+  updateHints(bank);
+
   select.onchange = () => {
     const bi = parseInt(select.value);
-    const b = banks[bi];
-    document.getElementById('setup-count').max = b.questions.length;
-    document.getElementById('setup-count').value = Math.min(parseInt(document.getElementById('setup-count').value) || 10, b.questions.length);
-    document.getElementById('setup-count-hint').textContent = `该题库共 ${b.questions.length} 题`;
+    updateHints(banks[bi]);
   };
 
   showScreen('setup');
@@ -830,21 +925,24 @@ function openSetup(bankIndex) {
 function startQuiz() {
   const banks = loadBanks();
   const bankIdx = parseInt(document.getElementById('setup-bank-select').value);
-  const count = parseInt(document.getElementById('setup-count').value) || 10;
-  const shuffleQ = document.getElementById('setup-shuffle').classList.contains('on');
+  const singleCount = parseInt(document.getElementById('setup-single-count').value) || 0;
+  const tfCount = parseInt(document.getElementById('setup-tf-count').value) || 0;
+  const multiCount = parseInt(document.getElementById('setup-multi-count').value) || 0;
 
   if (bankIdx < 0 || bankIdx >= banks.length) { showToast('请选择题库', 'error'); return; }
 
   const bank = banks[bankIdx];
-  if (count < 1) { showToast('题目数量至少为 1', 'error'); return; }
-  if (count > bank.questions.length) { showToast(`题目数量不能超过题库总数 (${bank.questions.length})`, 'error'); return; }
+  const counts = countByType(bank.questions);
+  if (singleCount > (counts.single || 0)) { showToast(`单选题数量不能超过 ${counts.single || 0}`, 'error'); return; }
+  if (tfCount > (counts.truefalse || 0)) { showToast(`判断题数量不能超过 ${counts.truefalse || 0}`, 'error'); return; }
+  if (multiCount > (counts.multiple || 0)) { showToast(`多选题数量不能超过 ${counts.multiple || 0}`, 'error'); return; }
+  if (singleCount + tfCount + multiCount === 0) { showToast('请至少选择一道题目', 'error'); return; }
 
   // Store setup, go to registration
   examRegistration = {
     bankIndex: bankIdx,
     bankName: bank.name,
-    count: count,
-    shuffle: shuffleQ,
+    singleCount, tfCount, multiCount,
     department: '',
     name: ''
   };
@@ -868,163 +966,95 @@ function startExam() {
   const banks = loadBanks();
   const bank = banks[examRegistration.bankIndex];
 
-  quizEngine = new QuizEngine(bank.questions, examRegistration.count, examRegistration.shuffle);
+  quizEngine = QuizEngine.fromTypes(bank.questions, examRegistration.singleCount, examRegistration.tfCount, examRegistration.multiCount);
   quizResult = null;
 
-  document.getElementById('q-total').textContent = quizEngine.total;
-
-  document.getElementById('btn-prev').classList.add('hidden');
-  document.getElementById('btn-submit').classList.add('hidden');
-  document.getElementById('btn-next').classList.remove('hidden');
-  document.getElementById('btn-next').textContent = quizEngine.total === 1 ? '交卷' : '下一题';
-
   showScreen('quiz');
-  renderQuestion();
-  updateQuizProgress();
+  renderAllQuestions();
 }
 
-function renderQuestion() {
+function renderAllQuestions() {
   if (!quizEngine) return;
-  const q = quizEngine.getCurrentQuestion();
-  const idx = quizEngine.current;
-  const card = document.getElementById('quiz-question-card');
+  const container = document.getElementById('quiz-questions-container');
+  let html = '';
 
-  document.getElementById('q-current').textContent = idx + 1;
-  document.getElementById('q-type-label').textContent = TYPE_LABELS[q.type] || '单选题';
-
-  let html = `<span class="question-type-badge ${TYPE_BADGES[q.type] || 'badge-single'}">${TYPE_LABELS[q.type] || '单选题'}</span>`;
-  html += `<div class="question-text">${escapeHtml(q.question)}</div>`;
-
-  if (q.type === 'single') {
-    html += `<div class="quiz-options">`;
-    q.options.forEach((opt, oi) => {
-      const selected = quizEngine.getAnswer(idx) === oi;
-      html += `
-        <button class="option-btn ${selected ? 'selected' : ''}" data-option="${oi}">
-          <span class="option-letter">${OPTION_LETTERS[oi]}</span>
-          <span class="option-text">${escapeHtml(opt)}</span>
-        </button>`;
-    });
+  quizEngine.questions.forEach((q, idx) => {
+    html += `<div class="quiz-q-card" id="quiz-q-${idx}">`;
+    html += `<div class="q-card-header">`;
+    html += `<span class="question-type-badge ${TYPE_BADGES[q.type] || 'badge-single'}">${TYPE_LABELS[q.type]}</span>`;
+    html += `<span class="q-card-num">第 ${idx + 1} / ${quizEngine.total} 题</span>`;
     html += `</div>`;
-  } else if (q.type === 'multiple') {
-    html += `<div class="quiz-options">`;
-    q.options.forEach((opt, oi) => {
-      const selected = quizEngine.hasMultipleSelected(idx, oi);
-      html += `
-        <button class="option-btn ${selected ? 'selected' : ''}" data-option="${oi}">
-          <span class="option-letter">${OPTION_LETTERS[oi]}</span>
-          <span class="option-text">${escapeHtml(opt)}</span>
-        </button>`;
-    });
-    html += `</div>`;
-    html += `<p class="hint mt-8">可多选，点击选项切换选中状态</p>`;
-  } else if (q.type === 'truefalse') {
-    html += `<div class="quiz-options">`;
-    ['正确', '错误'].forEach((opt, oi) => {
-      const val = oi === 0 ? true : false;
-      const selected = quizEngine.getAnswer(idx) === val;
-      html += `
-        <button class="option-btn ${selected ? 'selected' : ''}" data-option="${oi}">
-          <span class="option-letter">${oi === 0 ? '✓' : '✗'}</span>
-          <span class="option-text">${opt}</span>
-        </button>`;
-    });
-    html += `</div>`;
-  } else if (q.type === 'fill') {
-    const currentVal = quizEngine.getAnswer(idx) || '';
-    html += `<input type="text" class="fill-input" id="fill-answer" value="${escapeHtml(String(currentVal))}" placeholder="请输入答案..." autocomplete="off">`;
-  }
+    html += `<div class="question-text">${escapeHtml(q.question)}</div>`;
 
-  card.innerHTML = html;
+    if (q.type === 'single') {
+      html += `<div class="quiz-options">`;
+      q.options.forEach((opt, oi) => {
+        const sel = quizEngine.getAnswer(idx) === oi;
+        html += `<button class="option-btn ${sel ? 'selected' : ''}" data-q="${idx}" data-oi="${oi}"><span class="option-letter">${OPTION_LETTERS[oi]}</span><span class="option-text">${escapeHtml(opt)}</span></button>`;
+      });
+      html += `</div>`;
+    } else if (q.type === 'multiple') {
+      html += `<div class="quiz-options">`;
+      q.options.forEach((opt, oi) => {
+        const sel = quizEngine.hasMultipleSelected(idx, oi);
+        html += `<button class="option-btn ${sel ? 'selected' : ''}" data-q="${idx}" data-oi="${oi}"><span class="option-letter">${OPTION_LETTERS[oi]}</span><span class="option-text">${escapeHtml(opt)}</span></button>`;
+      });
+      html += `</div>`;
+      html += `<p class="hint">可多选，点击选项切换选中状态</p>`;
+    } else if (q.type === 'truefalse') {
+      html += `<div class="quiz-options">`;
+      [['✓','正确',true],['✗','错误',false]].forEach(([icon, label, val]) => {
+        const sel = quizEngine.getAnswer(idx) === val;
+        html += `<button class="option-btn ${sel ? 'selected' : ''}" data-q="${idx}" data-oi="${val === true ? 0 : 1}"><span class="option-letter">${icon}</span><span class="option-text">${label}</span></button>`;
+      });
+      html += `</div>`;
+    } else if (q.type === 'fill') {
+      const val = quizEngine.getAnswer(idx) || '';
+      html += `<input type="text" class="fill-input" data-q="${idx}" value="${escapeHtml(String(val))}" placeholder="请输入答案..." autocomplete="off">`;
+    }
 
-  // Bind option clicks
-  card.querySelectorAll('.option-btn').forEach(btn => {
+    html += `</div>`;
+  });
+
+  container.innerHTML = html;
+
+  // Bind clicks - direct DOM manipulation, no re-render
+  container.querySelectorAll('.option-btn').forEach(btn => {
     btn.addEventListener('click', () => {
-      const oi = parseInt(btn.dataset.option);
-      if (q.type === 'single' || q.type === 'truefalse') {
-        quizEngine.setAnswer(idx, q.type === 'truefalse' ? (oi === 0 ? true : false) : oi);
-        renderQuestion();
+      const qi = parseInt(btn.dataset.q);
+      const oi = parseInt(btn.dataset.oi);
+      const q = quizEngine.questions[qi];
+
+      if (q.type === 'single') {
+        quizEngine.setAnswer(qi, oi);
+        // Update visual: remove selected from siblings, add to clicked
+        const card = document.getElementById(`quiz-q-${qi}`);
+        card.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+      } else if (q.type === 'truefalse') {
+        const val = oi === 0 ? true : false;
+        quizEngine.setAnswer(qi, val);
+        const card = document.getElementById(`quiz-q-${qi}`);
+        card.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
       } else if (q.type === 'multiple') {
-        quizEngine.toggleMultipleAnswer(idx, oi);
-        renderQuestion();
+        quizEngine.toggleMultipleAnswer(qi, oi);
+        btn.classList.toggle('selected');
       }
     });
   });
 
-  // Fill input
-  const fillInput = card.querySelector('#fill-answer');
-  if (fillInput) {
-    fillInput.addEventListener('input', () => {
-      quizEngine.setAnswer(idx, fillInput.value);
+  // Fill inputs
+  container.querySelectorAll('.fill-input').forEach(input => {
+    input.addEventListener('input', () => {
+      const qi = parseInt(input.dataset.q);
+      quizEngine.setAnswer(qi, input.value);
     });
-    // Auto focus
-    setTimeout(() => fillInput.focus(), 100);
-  }
-
-  updateQuizProgress();
-  updateNavButtons();
-}
-
-function updateQuizProgress() {
-  if (!quizEngine) return;
-  const answered = quizEngine.total - quizEngine.unansweredCount();
-  document.getElementById('quiz-progress').style.width = `${(answered / quizEngine.total) * 100}%`;
-}
-
-function updateNavButtons() {
-  if (!quizEngine) return;
-  const idx = quizEngine.current;
-  const total = quizEngine.total;
-
-  const btnPrev = document.getElementById('btn-prev');
-  const btnNext = document.getElementById('btn-next');
-  const btnSubmit = document.getElementById('btn-submit');
-
-  btnPrev.classList.toggle('hidden', idx === 0);
-
-  if (idx === total - 1) {
-    btnNext.classList.add('hidden');
-    btnSubmit.classList.remove('hidden');
-  } else {
-    btnNext.classList.remove('hidden');
-    btnSubmit.classList.add('hidden');
-    btnNext.textContent = '下一题';
-  }
-}
-
-function quizNext() {
-  if (!quizEngine) return;
-  // Validate current answer
-  const q = quizEngine.getCurrentQuestion();
-  const a = quizEngine.getAnswer();
-  if (a === null || a === undefined || (q.type === 'multiple' && !(a instanceof Set && a.size > 0))) {
-    showToast('请先作答本题', 'error');
-    return;
-  }
-
-  if (quizEngine.next()) {
-    renderQuestion();
-    document.getElementById('quiz-question-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }
-}
-
-function quizPrev() {
-  if (!quizEngine) return;
-  if (quizEngine.prev()) {
-    renderQuestion();
-    document.getElementById('quiz-question-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }
+  });
 }
 
 function submitQuiz() {
   if (!quizEngine) return;
-  // Check last question
-  const q = quizEngine.getCurrentQuestion();
-  const a = quizEngine.getAnswer();
-  if (a === null || a === undefined || (q.type === 'multiple' && !(a instanceof Set && a.size > 0))) {
-    showToast('请先作答本题', 'error');
-    return;
-  }
 
   const unanswered = quizEngine.unansweredCount();
   if (unanswered > 0) {
@@ -1053,7 +1083,16 @@ function showResult() {
     bankName: examRegistration ? examRegistration.bankName : '',
     score: score,
     correct: correct,
-    total: total
+    total: total,
+    details: quizResult.results.map(r => ({
+      type: r.question.type,
+      question: r.question.question,
+      options: r.question.options || null,
+      correctAnswer: r.question.answer,
+      userAnswer: r.userAnswer instanceof Set ? [...r.userAnswer] : r.userAnswer,
+      isCorrect: r.isCorrect,
+      explanation: r.question.explanation || ''
+    }))
   });
   saveRecords(records);
 
@@ -1118,49 +1157,83 @@ function showResult() {
   document.getElementById('btn-result-home').onclick = goHome;
 }
 
-function showReview() {
-  if (!quizResult) return;
-  const list = document.getElementById('review-list');
-  list.innerHTML = quizResult.results.map((r, i) => {
-    const q = r.question;
+let reviewReturnAction = 'result'; // 'result' or 'records'
+
+function renderReviewHTML(details) {
+  if (!details || details.length === 0) return '<p class="text-muted text-center" style="padding:40px">暂无答题详情</p>';
+  return details.map((d, i) => {
+    const qType = d.type || 'single';
+    const options = d.options || [];
+    const correctAns = d.answer !== undefined ? d.answer : d.correctAnswer;
+    const userAns = d.userAnswer;
     let userAnsStr = '';
     let correctAnsStr = '';
 
-    if (q.type === 'single') {
-      userAnsStr = r.userAnswer !== null && r.userAnswer !== undefined ? `${OPTION_LETTERS[r.userAnswer]}. ${escapeHtml(q.options[r.userAnswer] || '')}` : '未作答';
-      correctAnsStr = `${OPTION_LETTERS[q.answer]}. ${escapeHtml(q.options[q.answer] || '')}`;
-    } else if (q.type === 'multiple') {
-      if (r.userAnswer instanceof Set && r.userAnswer.size > 0) {
-        userAnsStr = [...r.userAnswer].map(oi => `${OPTION_LETTERS[oi]}. ${escapeHtml(q.options[oi] || '')}`).join('；');
-      } else {
-        userAnsStr = '未作答';
-      }
-      correctAnsStr = q.answer.map(oi => `${OPTION_LETTERS[oi]}. ${escapeHtml(q.options[oi] || '')}`).join('；');
-    } else if (q.type === 'truefalse') {
-      userAnsStr = r.userAnswer === true ? '正确' : r.userAnswer === false ? '错误' : '未作答';
-      correctAnsStr = q.answer === true ? '正确' : '错误';
-    } else if (q.type === 'fill') {
-      userAnsStr = r.userAnswer || '未作答';
-      correctAnsStr = q.answer;
+    if (qType === 'single') {
+      userAnsStr = userAns !== null && userAns !== undefined ? `${OPTION_LETTERS[userAns]}. ${escapeHtml(options[userAns] || '')}` : '未作答';
+      correctAnsStr = `${OPTION_LETTERS[correctAns]}. ${escapeHtml(options[correctAns] || '')}`;
+    } else if (qType === 'multiple') {
+      const userArr = Array.isArray(userAns) ? userAns : (userAns instanceof Set ? [...userAns] : []);
+      const correctArr = Array.isArray(correctAns) ? correctAns : [];
+      userAnsStr = userArr.length > 0 ? userArr.map(oi => `${OPTION_LETTERS[oi]}. ${escapeHtml(options[oi] || '')}`).join('；') : '未作答';
+      correctAnsStr = correctArr.map(oi => `${OPTION_LETTERS[oi]}. ${escapeHtml(options[oi] || '')}`).join('；');
+    } else if (qType === 'truefalse') {
+      userAnsStr = userAns === true ? '正确' : userAns === false ? '错误' : '未作答';
+      correctAnsStr = correctAns === true ? '正确' : '错误';
+    } else if (qType === 'fill') {
+      userAnsStr = userAns || '未作答';
+      correctAnsStr = String(correctAns ?? '');
     }
 
     return `
-      <div class="review-item ${r.isCorrect ? 'correct' : 'wrong'}">
+      <div class="review-item ${d.isCorrect ? 'correct' : 'wrong'}">
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
-          <span class="question-type-badge ${TYPE_BADGES[q.type] || 'badge-single'}" style="margin-bottom:0">${TYPE_LABELS[q.type]}</span>
+          <span class="question-type-badge ${TYPE_BADGES[qType] || 'badge-single'}" style="margin-bottom:0">${TYPE_LABELS[qType]}</span>
           <span style="font-size:13px;color:var(--c-text-secondary)">第 ${i + 1} 题</span>
-          <span style="margin-left:auto;font-weight:600;font-size:14px;${r.isCorrect ? 'color:var(--c-success)' : 'color:var(--c-error)'}">${r.isCorrect ? '✓ 正确' : '✗ 错误'}</span>
+          <span style="margin-left:auto;font-weight:600;font-size:14px;${d.isCorrect ? 'color:var(--c-success)' : 'color:var(--c-error)'}">${d.isCorrect ? '✓ 正确' : '✗ 错误'}</span>
         </div>
-        <div class="review-q">${escapeHtml(q.question)}</div>
-        <div class="review-answer user-ans ${r.isCorrect ? 'correct-ans' : ''}">
+        <div class="review-q">${escapeHtml(d.question)}</div>
+        <div class="review-answer user-ans ${d.isCorrect ? 'correct-ans' : ''}">
           <span class="label">你的答案：</span>${userAnsStr}
         </div>
-        ${!r.isCorrect ? `<div class="review-answer correct-ans"><span class="label">正确答案：</span>${correctAnsStr}</div>` : ''}
-        ${q.explanation ? `<div class="review-explanation">💡 ${escapeHtml(q.explanation)}</div>` : ''}
+        ${!d.isCorrect ? `<div class="review-answer correct-ans"><span class="label">正确答案：</span>${correctAnsStr}</div>` : ''}
+        ${d.explanation ? `<div class="review-explanation">💡 ${escapeHtml(d.explanation)}</div>` : ''}
       </div>
     `;
   }).join('');
+}
 
+function showReview() {
+  if (!quizResult) return;
+  reviewReturnAction = 'result';
+  const details = quizResult.results.map(r => ({
+    type: r.question.type,
+    question: r.question.question,
+    options: r.question.options || [],
+    answer: r.question.answer,
+    userAnswer: r.userAnswer,
+    isCorrect: r.isCorrect,
+    explanation: r.question.explanation || ''
+  }));
+  document.getElementById('review-list').innerHTML = renderReviewHTML(details);
+  document.getElementById('btn-back-result').textContent = '← 返回成绩';
+  showScreen('review');
+}
+
+function showRecordReview(recordId) {
+  const records = loadRecords();
+  const record = records.find(r => r.id === recordId);
+  if (!record || !record.details) { showToast('该记录暂无答题详情', 'error'); return; }
+  reviewReturnAction = 'records';
+  // Normalize: stored details use 'correctAnswer', helper expects 'answer'
+  const details = record.details.map(d => ({ ...d, answer: d.correctAnswer ?? d.answer }));
+  document.getElementById('review-list').innerHTML = `
+    <div style="font-size:13px;color:var(--c-text-secondary);margin-bottom:12px;">
+      👤 ${escapeHtml(record.name)} · 🏢 ${escapeHtml(record.department)} · 📚 ${escapeHtml(record.bankName)} · 🕐 ${record.date}
+    </div>
+    ${renderReviewHTML(details)}
+  `;
+  document.getElementById('btn-back-result').textContent = '← 返回记录';
   showScreen('review');
 }
 
@@ -1178,8 +1251,9 @@ function showRecords() {
     const sorted = [...records].reverse();
     listEl.innerHTML = sorted.map(r => {
       const color = r.score >= 80 ? 'var(--c-success)' : r.score >= 60 ? 'var(--c-warning)' : 'var(--c-error)';
+      const hasDetail = r.details && r.details.length > 0;
       return `
-        <div class="record-item">
+        <div class="record-item ${hasDetail ? 'record-clickable' : ''}" data-record-id="${r.id}" style="${hasDetail ? 'cursor:pointer;' : ''}">
           <div class="record-header">
             <div class="record-name">${escapeHtml(r.name)} · ${escapeHtml(r.department)}</div>
             <div class="record-score" style="color:${color}">${r.score} 分</div>
@@ -1188,10 +1262,18 @@ function showRecords() {
             <span>📚 ${escapeHtml(r.bankName)}</span>
             <span>✅ ${r.correct}/${r.total} 正确</span>
           </div>
-          <div class="record-date">🕐 ${r.date}</div>
+          <div class="record-date">🕐 ${r.date}${hasDetail ? ' · 点击查看答题详情' : ''}</div>
         </div>
       `;
     }).join('');
+
+    // Bind click to view details
+    listEl.querySelectorAll('.record-clickable').forEach(el => {
+      el.addEventListener('click', () => {
+        const rid = parseInt(el.dataset.recordId);
+        showRecordReview(rid);
+      });
+    });
   }
   showScreen('records');
 }
@@ -1287,23 +1369,127 @@ fileArea.addEventListener('dragleave', () => fileArea.classList.remove('dragover
 fileArea.addEventListener('drop', (e) => {
   e.preventDefault();
   fileArea.classList.remove('dragover');
-  if (e.dataTransfer.files.length > 0) handleFile(e.dataTransfer.files[0]);
+  if (e.dataTransfer.files.length > 0) handleFiles(Array.from(e.dataTransfer.files));
 });
 fileInput.addEventListener('change', () => {
-  if (fileInput.files.length > 0) handleFile(fileInput.files[0]);
+  if (fileInput.files.length > 0) handleFiles(Array.from(fileInput.files));
 });
-function handleFile(file) {
-  document.getElementById('file-name').textContent = `已选择: ${file.name}`;
-  const reader = new FileReader();
-  reader.onload = () => {
+async function handleFiles(files) {
+  if (files.length === 0) return;
+  document.getElementById('file-name').textContent = `已选择 ${files.length} 个文件: ${files.map(f => f.name).join(', ')}`;
+
+  let totalImported = 0;
+  for (const file of files) {
+    const ext = file.name.split('.').pop().toLowerCase();
     try {
-      const data = JSON.parse(reader.result);
-      if (importBank(data)) closeImportModal();
+      if (ext === 'xls' || ext === 'xlsx') {
+        const bank = await parseExcelFile(file);
+        importBank(bank);
+        totalImported++;
+      } else {
+        const bank = await parseJsonFile(file);
+        importBank(bank);
+        totalImported++;
+      }
     } catch (e) {
-      showToast('文件 JSON 格式错误', 'error');
+      showToast(`${file.name} 解析失败: ${e.message}`, 'error');
     }
-  };
-  reader.readAsText(file);
+  }
+  showToast(`完成！成功导入 ${totalImported}/${files.length} 个文件`, 'success');
+  closeImportModal();
+}
+
+function parseExcelFile(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const wb = XLSX.read(reader.result, { type: 'array' });
+        resolve(parseExcelBank(wb, file.name));
+      } catch (e) { reject(e); }
+    };
+    reader.onerror = () => reject(new Error('读取失败'));
+    reader.readAsArrayBuffer(file);
+  });
+}
+
+function parseJsonFile(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      try { resolve(JSON.parse(reader.result)); }
+      catch (e) { reject(new Error('JSON格式错误')); }
+    };
+    reader.onerror = () => reject(new Error('读取失败'));
+    reader.readAsText(file);
+  });
+}
+
+function parseExcelBank(wb, filename) {
+  const ws = wb.Sheets[wb.SheetNames[0]];
+  const rows = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' });
+  if (rows.length < 2) throw new Error('空文件');
+
+  // Detect header
+  const header = rows[0].map(h => String(h).trim());
+  let qCol = 0, optStart = 1, ansCol = header.length - 1;
+
+  // Auto-detect column positions
+  for (let i = 0; i < header.length; i++) {
+    const h = header[i].toLowerCase();
+    if (h.includes('题目') || h.includes('问题') || h === 'question') qCol = i;
+    if (h.includes('答案') || h.includes('正确') || h === 'answer') ansCol = i;
+    if (h === 'a' || h === '选项a' || h === '选项1') optStart = i;
+  }
+
+  // Find where options end (before answer column or end)
+  let optEnd = ansCol;
+  if (ansCol <= optStart) optEnd = header.length;
+
+  const questions = [];
+  for (let r = 1; r < rows.length; r++) {
+    const row = rows[r];
+    const qText = String(row[qCol] || '').trim();
+    if (!qText) continue;
+
+    const options = [];
+    for (let c = optStart; c < optEnd; c++) {
+      const opt = String(row[c] || '').trim();
+      if (opt) options.push(opt);
+    }
+
+    const ansRaw = String(row[ansCol] || '').trim();
+    let type = 'single';
+    let answer = null;
+
+    // Determine type and answer
+    if (options.length === 0) {
+      // No options → fill-in-the-blank
+      type = 'fill';
+      answer = ansRaw;
+    } else if (options.length === 2 && (options[0] === '正确' || options[0] === '对' || options[0] === 'T' || options[0] === 'True')) {
+      // Likely true/false
+      type = 'truefalse';
+      const ans = ansRaw.toUpperCase();
+      answer = ans === '正确' || ans === '对' || ans === 'T' || ans === 'TRUE' || ans === 'A' || ans === '✓';
+    } else {
+      // Single choice: answer is letter (A/B/C/D) or index
+      const letterIdx = 'ABCDEFGH'.indexOf(ansRaw.toUpperCase());
+      if (letterIdx >= 0) {
+        answer = letterIdx;
+      } else {
+        const numIdx = parseInt(ansRaw);
+        answer = !isNaN(numIdx) && numIdx >= 1 && numIdx <= options.length ? numIdx - 1 : 0;
+      }
+    }
+
+    questions.push({ type, question: qText, options, answer, explanation: '' });
+  }
+
+  if (questions.length === 0) throw new Error('未识别到题目');
+
+  const name = filename.replace(/\.(xlsx?|xls)$/i, '');
+  return { name, description: `从 Excel 导入，共 ${questions.length} 题`, questions };
 }
 
 // Sample import
@@ -1312,21 +1498,17 @@ document.getElementById('btn-import-sample').addEventListener('click', () => {
   if (importBank(sample)) closeImportModal();
 });
 
-// Toggle
-document.getElementById('setup-shuffle').addEventListener('click', function() {
-  this.classList.toggle('on');
-});
-
 // Start quiz
 document.getElementById('btn-start-quiz').addEventListener('click', startQuiz);
 
-// Quiz navigation
-document.getElementById('btn-next').addEventListener('click', quizNext);
-document.getElementById('btn-prev').addEventListener('click', quizPrev);
+// Quiz submit
 document.getElementById('btn-submit').addEventListener('click', submitQuiz);
 
 // Review back
-document.getElementById('btn-back-result').addEventListener('click', showResult);
+document.getElementById('btn-back-result').addEventListener('click', () => {
+  if (reviewReturnAction === 'records') showRecords();
+  else showResult();
+});
 
 // Registration → start exam
 document.getElementById('btn-confirm-start').addEventListener('click', startExam);
@@ -1426,6 +1608,7 @@ function init() {
 
 init();
 </script>
+<script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
 
 </body>
 </html>
