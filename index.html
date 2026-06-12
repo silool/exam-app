@@ -378,14 +378,19 @@
           <label>选择题库</label>
           <select id="setup-bank-select"></select>
         </div>
-        <div class="form-group">
-          <label>题目数量</label>
-          <input type="number" id="setup-count" min="1" value="10" placeholder="输入题目数量">
-          <span class="hint" id="setup-count-hint"></span>
-        </div>
         <div class="toggle-row">
-          <span>随机打乱题目顺序</span>
-          <div class="toggle on" id="setup-shuffle"></div>
+          <span>📋 考试模式（100单选+70多选+30判断，每题0.5分）</span>
+          <div class="toggle on" id="toggle-exam-mode"></div>
+        </div>
+        <div id="setup-exam-fields">
+          <span class="hint">固定：200题 = 100单选 + 70多选 + 30判断，满分100</span>
+        </div>
+        <div id="setup-practice-fields" class="hidden">
+          <div class="form-group">
+            <label>题目数量</label>
+            <input type="number" id="setup-count" min="1" value="10" placeholder="输入题目数量">
+            <span class="hint" id="setup-count-hint"></span>
+          </div>
         </div>
         <button class="btn btn-primary btn-block mt-8" id="btn-start-quiz">开始考试</button>
       </div>
@@ -595,6 +600,16 @@ class QuizEngine {
     if (index >= 0 && index < this.total) { this.currentIndex = index; }
   }
 
+
+  static fromTypes(allQuestions, singleCount, tfCount, multiCount) {
+    const groups = { single: [], truefalse: [], multiple: [] };
+    allQuestions.forEach(q => { const t = q.type || "single"; if (groups[t]) groups[t].push(q); });
+    const selected = [];
+    selected.push(...shuffle(groups.single).slice(0, singleCount));
+    selected.push(...shuffle(groups.truefalse).slice(0, tfCount));
+    selected.push(...shuffle(groups.multiple).slice(0, multiCount));
+    return new QuizEngine(selected, selected.length, false);
+  }
   calculateScore() {
     let correct = 0;
     const results = this.questions.map((q, i) => {
@@ -620,7 +635,7 @@ class QuizEngine {
       if (isCorrect) correct++;
       return { question: q, userAnswer: userAns, isCorrect };
     });
-    return { correct, total: this.questions.length, score: Math.round((correct / this.questions.length) * 100), results };
+    return { correct, total: this.questions.length, score: parseFloat((correct * 0.5).toFixed(1)), results };
   }
 
   allAnswered() {
@@ -802,87 +817,86 @@ function deleteBank(index) {
 }
 
 // ===== Setup Screen =====
+
+function countByType(questions) {
+  const c = { single: 0, truefalse: 0, multiple: 0, fill: 0 };
+  questions.forEach(q => { const t = q.type || "single"; if (c[t] !== undefined) c[t]++; });
+  return c;
+}
 function openSetup(bankIndex) {
   const banks = loadBanks();
   if (bankIndex < 0 || bankIndex >= banks.length) return;
-
   const bank = banks[bankIndex];
-  const select = document.getElementById('setup-bank-select');
-  select.innerHTML = banks.map((b, i) => `<option value="${i}" ${i === bankIndex ? 'selected' : ''}>${escapeHtml(b.name || '未命名')} (${b.questions.length}题)</option>`).join('');
-
-  document.getElementById('setup-count').value = Math.min(10, bank.questions.length);
-  document.getElementById('setup-count').max = bank.questions.length;
-  document.getElementById('setup-count-hint').textContent = `该题库共 ${bank.questions.length} 题`;
-
-  // Update count hint when bank changes
+  const select = document.getElementById("setup-bank-select");
+  select.innerHTML = banks.map((b, i) => `<option value="${i}" ${i === bankIndex ? "selected" : ""}>${escapeHtml(b.name || "未命名")} (${b.questions.length}题)</option>`).join("");
+  document.getElementById("setup-count").value = Math.min(10, bank.questions.length);
+  document.getElementById("setup-count").max = bank.questions.length;
+  document.getElementById("setup-count-hint").textContent = `该题库共 ${bank.questions.length} 题`;
   select.onchange = () => {
     const bi = parseInt(select.value);
     const b = banks[bi];
-    document.getElementById('setup-count').max = b.questions.length;
-    document.getElementById('setup-count').value = Math.min(parseInt(document.getElementById('setup-count').value) || 10, b.questions.length);
-    document.getElementById('setup-count-hint').textContent = `该题库共 ${b.questions.length} 题`;
+    document.getElementById("setup-count").max = b.questions.length;
+    document.getElementById("setup-count").value = Math.min(parseInt(document.getElementById("setup-count").value) || 10, b.questions.length);
+    document.getElementById("setup-count-hint").textContent = `该题库共 ${b.questions.length} 题`;
   };
-
-  showScreen('setup');
+  showScreen("setup");
+}
 }
 
 // ===== Quiz =====
 function startQuiz() {
+  const isExam = document.getElementById("toggle-exam-mode").classList.contains("on");
   const banks = loadBanks();
-  const bankIdx = parseInt(document.getElementById('setup-bank-select').value);
-  const count = parseInt(document.getElementById('setup-count').value) || 10;
-  const shuffleQ = document.getElementById('setup-shuffle').classList.contains('on');
-
-  if (bankIdx < 0 || bankIdx >= banks.length) { showToast('请选择题库', 'error'); return; }
-
+  const bankIdx = parseInt(document.getElementById("setup-bank-select").value);
+  if (bankIdx < 0 || bankIdx >= banks.length) { showToast("请选择题库", "error"); return; }
   const bank = banks[bankIdx];
-  if (count < 1) { showToast('题目数量至少为 1', 'error'); return; }
-  if (count > bank.questions.length) { showToast(`题目数量不能超过题库总数 (${bank.questions.length})`, 'error'); return; }
 
-  // Store setup, go to registration
-  examRegistration = {
-    bankIndex: bankIdx,
-    bankName: bank.name,
-    count: count,
-    shuffle: shuffleQ,
-    department: '',
-    name: ''
-  };
+  if (isExam) {
+    const c = countByType(bank.questions);
+    const need = { single: 100, truefalse: 30, multiple: 70 };
+    if ((c.single||0) < 100) { showToast(`单选题不足，题库仅 ${c.single||0} 题`, "error"); return; }
+    if ((c.truefalse||0) < 30) { showToast(`判断题不足，题库仅 ${c.truefalse||0} 题`, "error"); return; }
+    if ((c.multiple||0) < 70) { showToast(`多选题不足，题库仅 ${c.multiple||0} 题`, "error"); return; }
+    examRegistration = { bankIndex: bankIdx, bankName: bank.name, examMode: true, department: "", name: "" };
+  } else {
+    const count = parseInt(document.getElementById("setup-count").value) || 10;
+    if (count < 1) { showToast("题目数量至少为 1", "error"); return; }
+    if (count > bank.questions.length) { showToast(`题目数量不能超过 ${bank.questions.length}`, "error"); return; }
+    examRegistration = { bankIndex: bankIdx, bankName: bank.name, examMode: false, count: count, department: "", name: "" };
+  }
 
-  document.getElementById('reg-department').value = '';
-  document.getElementById('reg-name').value = '';
-  showScreen('register');
-  setTimeout(() => document.getElementById('reg-department').focus(), 200);
+  document.getElementById("reg-department").value = "";
+  document.getElementById("reg-name").value = "";
+  showScreen("register");
+  setTimeout(() => document.getElementById("reg-department").focus(), 200);
 }
 
 function startExam() {
-  const dept = document.getElementById('reg-department').value.trim();
-  const uname = document.getElementById('reg-name').value.trim();
-
-  if (!dept) { showToast('请输入部门', 'error'); document.getElementById('reg-department').focus(); return; }
-  if (!uname) { showToast('请输入姓名', 'error'); document.getElementById('reg-name').focus(); return; }
-
+  const dept = document.getElementById("reg-department").value.trim();
+  const uname = document.getElementById("reg-name").value.trim();
+  if (!dept) { showToast("请输入部门", "error"); document.getElementById("reg-department").focus(); return; }
+  if (!uname) { showToast("请输入姓名", "error"); document.getElementById("reg-name").focus(); return; }
   examRegistration.department = dept;
   examRegistration.name = uname;
-
   const banks = loadBanks();
   const bank = banks[examRegistration.bankIndex];
 
-  quizEngine = new QuizEngine(bank.questions, examRegistration.count, examRegistration.shuffle);
+  if (examRegistration.examMode) {
+    quizEngine = QuizEngine.fromTypes(bank.questions, 100, 30, 70);
+  } else {
+    quizEngine = new QuizEngine(bank.questions, examRegistration.count, true);
+  }
   quizResult = null;
 
-  document.getElementById('q-total').textContent = quizEngine.total;
-
-  document.getElementById('btn-prev').classList.add('hidden');
-  document.getElementById('btn-submit').classList.add('hidden');
-  document.getElementById('btn-next').classList.remove('hidden');
-  document.getElementById('btn-next').textContent = quizEngine.total === 1 ? '交卷' : '下一题';
-
-  showScreen('quiz');
+  document.getElementById("q-total").textContent = quizEngine.total;
+  document.getElementById("btn-prev").classList.add("hidden");
+  document.getElementById("btn-submit").classList.add("hidden");
+  document.getElementById("btn-next").classList.remove("hidden");
+  document.getElementById("btn-next").textContent = quizEngine.total === 1 ? "交卷" : "下一题";
+  showScreen("quiz");
   renderQuestion();
   updateQuizProgress();
 }
-
 function renderQuestion() {
   if (!quizEngine) return;
   const q = quizEngine.getCurrentQuestion();
@@ -1057,9 +1071,11 @@ function showResult() {
   });
   saveRecords(records);
 
-  const color = score >= 80 ? 'var(--c-success)' : score >= 60 ? 'var(--c-warning)' : 'var(--c-error)';
+  const color = pct >= 80 ? 'var(--c-success)' : score >= 60 ? 'var(--c-warning)' : 'var(--c-error)';
   const circumference = 2 * Math.PI * 56;
-  const offset = circumference - (score / 100) * circumference;
+  const maxScore = total * 0.5;
+  const pct = maxScore > 0 ? (score / maxScore) * 100 : 0;
+  const offset = circumference - (score / maxScore) * circumference;
 
   document.getElementById('result-content').innerHTML = `
     <div class="score-circle">
@@ -1312,9 +1328,13 @@ document.getElementById('btn-import-sample').addEventListener('click', () => {
   if (importBank(sample)) closeImportModal();
 });
 
-// Toggle
-document.getElementById('setup-shuffle').addEventListener('click', function() {
-  this.classList.toggle('on');
+// Exam mode toggle
+document.getElementById("toggle-exam-mode").addEventListener("click", function() {
+  this.classList.toggle("on");
+  const isExam = this.classList.contains("on");
+  document.getElementById("setup-exam-fields").classList.toggle("hidden", !isExam);
+  document.getElementById("setup-practice-fields").classList.toggle("hidden", isExam);
+  document.getElementById("btn-start-quiz").textContent = isExam ? "开始考试" : "开始练习";
 });
 
 // Start quiz
