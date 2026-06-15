@@ -431,20 +431,32 @@
           <label>选择题库</label>
           <select id="setup-bank-select"></select>
         </div>
-        <div class="form-group">
-          <label>单选题数量</label>
-          <input type="number" id="setup-single-count" min="0" value="5" placeholder="单选题数量">
-          <span class="hint" id="setup-single-hint"></span>
+        <div class="toggle-row">
+          <span>📋 考试模式（固定：100单选+30判断+70多选）</span>
+          <div class="toggle on" id="toggle-exam-mode"></div>
         </div>
-        <div class="form-group">
-          <label>判断题数量</label>
-          <input type="number" id="setup-tf-count" min="0" value="3" placeholder="判断题数量">
-          <span class="hint" id="setup-tf-hint"></span>
+        <div id="setup-exam-fields">
+          <input type="hidden" id="setup-single-count" value="100">
+          <input type="hidden" id="setup-tf-count" value="30">
+          <input type="hidden" id="setup-multi-count" value="70">
+          <span class="hint">固定：200题 = 100单选 + 30判断 + 70多选</span>
         </div>
-        <div class="form-group">
-          <label>多选题数量</label>
-          <input type="number" id="setup-multi-count" min="0" value="2" placeholder="多选题数量">
-          <span class="hint" id="setup-multi-hint"></span>
+        <div id="setup-practice-fields" class="hidden">
+          <div class="form-group">
+            <label>单选题数量</label>
+            <input type="number" id="setup-practice-single" min="0" value="10">
+            <span class="hint" id="setup-single-hint"></span>
+          </div>
+          <div class="form-group">
+            <label>判断题数量</label>
+            <input type="number" id="setup-practice-tf" min="0" value="5">
+            <span class="hint" id="setup-tf-hint"></span>
+          </div>
+          <div class="form-group">
+            <label>多选题数量</label>
+            <input type="number" id="setup-practice-multi" min="0" value="5">
+            <span class="hint" id="setup-multi-hint"></span>
+          </div>
         </div>
         <button class="btn btn-primary btn-block mt-8" id="btn-start-quiz">开始考试</button>
       </div>
@@ -492,6 +504,7 @@
         <h3 style="font-size:18px;font-weight:700;margin:0;">📋 考试记录</h3>
         <div class="records-actions">
           <button class="btn btn-sm btn-outline" id="btn-export-records">导出 CSV</button>
+          <button class="btn btn-sm btn-outline" id="btn-clear-records" style="color:var(--c-error);border-color:var(--c-error);">清空记录</button>
 
         </div>
       </div>
@@ -896,6 +909,10 @@ function openSetup(bankIndex) {
 
   const bank = banks[bankIndex];
   const select = document.getElementById('setup-bank-select');
+  document.getElementById("toggle-exam-mode").classList.add("on");
+  document.getElementById("setup-exam-fields").classList.remove("hidden");
+  document.getElementById("setup-practice-fields").classList.add("hidden");
+  document.getElementById("btn-start-quiz").textContent = "开始考试";
   select.innerHTML = banks.map((b, i) => `<option value="${i}" ${i === bankIndex ? 'selected' : ''}>${escapeHtml(b.name || '未命名')} (${b.questions.length}题)</option>`).join('');
 
   const updateHints = (b) => {
@@ -906,9 +923,9 @@ function openSetup(bankIndex) {
       el.value = Math.min(parseInt(el.value) || 0, max);
       document.getElementById(hintId).textContent = `该题库共 ${max} 题`;
     };
-    setField('setup-single-count', 'setup-single-hint', counts.single || 0);
-    setField('setup-tf-count', 'setup-tf-hint', counts.truefalse || 0);
-    setField('setup-multi-count', 'setup-multi-hint', counts.multiple || 0);
+    setField("setup-practice-single", "setup-single-hint", counts.single || 0);
+    setField("setup-practice-tf", "setup-tf-hint", counts.truefalse || 0);
+    setField("setup-practice-multi", "setup-multi-hint", counts.multiple || 0);
   };
 
   updateHints(bank);
@@ -923,33 +940,39 @@ function openSetup(bankIndex) {
 
 // ===== Quiz =====
 function startQuiz() {
+  const isExam = document.getElementById("toggle-exam-mode").classList.contains("on");
   const banks = loadBanks();
-  const bankIdx = parseInt(document.getElementById('setup-bank-select').value);
-  const singleCount = parseInt(document.getElementById('setup-single-count').value) || 0;
-  const tfCount = parseInt(document.getElementById('setup-tf-count').value) || 0;
-  const multiCount = parseInt(document.getElementById('setup-multi-count').value) || 0;
+  const bankIdx = parseInt(document.getElementById("setup-bank-select").value);
 
-  if (bankIdx < 0 || bankIdx >= banks.length) { showToast('请选择题库', 'error'); return; }
+  let singleCount, tfCount, multiCount;
+  if (isExam) {
+    singleCount = parseInt(document.getElementById("setup-single-count").value) || 0;
+    tfCount = parseInt(document.getElementById("setup-tf-count").value) || 0;
+    multiCount = parseInt(document.getElementById("setup-multi-count").value) || 0;
+  } else {
+    singleCount = parseInt(document.getElementById("setup-practice-single").value) || 0;
+    tfCount = parseInt(document.getElementById("setup-practice-tf").value) || 0;
+    multiCount = parseInt(document.getElementById("setup-practice-multi").value) || 0;
+  }
 
+  if (bankIdx < 0 || bankIdx >= banks.length) { showToast("请选择题库", "error"); return; }
   const bank = banks[bankIdx];
   const counts = countByType(bank.questions);
-  if (singleCount > (counts.single || 0)) { showToast(`单选题数量不能超过 ${counts.single || 0}`, 'error'); return; }
-  if (tfCount > (counts.truefalse || 0)) { showToast(`判断题数量不能超过 ${counts.truefalse || 0}`, 'error'); return; }
-  if (multiCount > (counts.multiple || 0)) { showToast(`多选题数量不能超过 ${counts.multiple || 0}`, 'error'); return; }
-  if (singleCount + tfCount + multiCount === 0) { showToast('请至少选择一道题目', 'error'); return; }
+  if (singleCount > (counts.single || 0)) { showToast(`单选题最多 ${counts.single || 0} 题`, "error"); return; }
+  if (tfCount > (counts.truefalse || 0)) { showToast(`判断题最多 ${counts.truefalse || 0} 题`, "error"); return; }
+  if (multiCount > (counts.multiple || 0)) { showToast(`多选题最多 ${counts.multiple || 0} 题`, "error"); return; }
+  if (singleCount + tfCount + multiCount === 0) { showToast("请至少选择一道题目", "error"); return; }
 
-  // Store setup, go to registration
   examRegistration = {
-    bankIndex: bankIdx,
-    bankName: bank.name,
+    bankIndex: bankIdx, bankName: bank.name,
     singleCount, tfCount, multiCount,
-    department: '',
-    name: ''
+    department: "", name: ""
   };
-
-  document.getElementById('reg-department').value = '';
-  document.getElementById('reg-name').value = '';
-  showScreen('register');
+  document.getElementById("reg-department").value = "";
+  document.getElementById("reg-name").value = "";
+  showScreen("register");
+  setTimeout(() => document.getElementById("reg-department").focus(), 200);
+}
   setTimeout(() => document.getElementById('reg-department').focus(), 200);
 }
 
@@ -1307,7 +1330,8 @@ function exportRecordsCSV() {
 }
 
 function clearRecords() {
-  if (!confirm('确定清空所有考试记录吗？此操作不可撤销。')) return;
+  const pw = prompt("删除考试记录需要管理员密码：");
+  if (pw !== "qwe*315315") { showToast("密码错误，无法删除", "error"); return; }
   saveRecords([]);
   showRecords();
   showToast('记录已清空', 'success');
@@ -1559,6 +1583,7 @@ document.getElementById('btn-back-setup').addEventListener('click', () => { show
 document.getElementById('btn-records').addEventListener('click', showRecords);
 document.getElementById('home-records-card').addEventListener('click', showRecords);
 document.getElementById('btn-export-records').addEventListener('click', exportRecordsCSV);
+document.getElementById("btn-clear-records").addEventListener("click", clearRecords);
 
 // ===== Sample Question Bank =====
 function getSampleBank() {
@@ -1646,6 +1671,15 @@ function init() {
   }
 }
 
+
+// Exam mode toggle
+document.getElementById("toggle-exam-mode").addEventListener("click", function() {
+  this.classList.toggle("on");
+  const isExam = this.classList.contains("on");
+  document.getElementById("setup-exam-fields").classList.toggle("hidden", !isExam);
+  document.getElementById("setup-practice-fields").classList.toggle("hidden", isExam);
+  document.getElementById("btn-start-quiz").textContent = isExam ? "开始考试" : "开始练习";
+});
 init();
 </script>
 <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
