@@ -1432,6 +1432,7 @@ async function handleFiles(files) {
 }
 
 function parseExcelFile(file) {
+  if (typeof XLSX === "undefined") { showToast("Excel 解析库未加载，请检查网络后刷新", "error"); return; }
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = () => {
@@ -1682,7 +1683,7 @@ document.getElementById("toggle-exam-mode").addEventListener("click", function()
 });
 init();
 </script>
-<script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+<script src="lib/xlsx.full.min.js"></script>
 
 </body>
 </html>
