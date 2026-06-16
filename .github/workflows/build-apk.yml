@@ -37,7 +37,9 @@ jobs:
           restore-keys: gradle-${{ runner.os }}-
 
       - name: Build Capacitor Android
-        run: npx cap sync android
+        run: |
+          npx cap add android
+          npx cap sync android
 
       - name: Build APK
         working-directory: android
