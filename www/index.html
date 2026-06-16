@@ -319,7 +319,7 @@
     @keyframes toastIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
 
     /* ===== Modal ===== */
-    .modal-overlay {
+    #import-modal.modal-overlay {
       position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 100;
       display: flex; align-items: flex-end; justify-content: center;
       animation: fadeIn .2s ease;
@@ -387,8 +387,6 @@
       #review-list { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
       /* Bank list 2-column */
       #bank-list { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-      /* Home records card */
-      #home-records-card { grid-column: 1 / -1; }
     }
 
     @media (min-width: 900px) {
@@ -414,7 +412,7 @@
   <!-- Main -->
   <main class="app-main">
     <!-- Home Screen -->
-    <div class="screen active" id="screen-home" style="display:flex;align-items:center;justify-content:center;">
+    <div class="screen active" id="screen-home" style="align-items:center;justify-content:center;">
       <div style="text-align:center;">
         <span style="font-size:64px;display:block;margin-bottom:16px;">⚡</span>
         <button class="btn btn-primary" id="btn-start-exam-home" style="padding:18px 56px;font-size:20px;font-weight:700;border-radius:16px;box-shadow:0 4px 16px rgba(99,102,241,.4);">
@@ -423,6 +421,12 @@
         <p style="margin-top:16px;font-size:13px;color:var(--c-text-muted);">2026年公司技术标准知识考试</p>
       </div>
       <div id="bank-list" style="display:none;"></div>
+      <div id="empty-banks" class="empty-state hidden">
+        <span class="empty-icon">📚</span>
+        <h3>还没有题库</h3>
+        <p>点击右上角 ＋ 按钮<br>导入你的第一个题库吧</p>
+        <button class="btn btn-primary" id="btn-empty-import">导入题库</button>
+      </div>
     </div>
 
     <!-- Setup Screen -->
@@ -686,6 +690,7 @@ class QuizEngine {
   }
 
   calculateScore() {
+    if (this.questions.length === 0) return { correct: 0, total: 0, score: 0, results: [] };
     let correct = 0;
     const results = this.questions.map((q, i) => {
       const userAns = this.answers[i];
@@ -842,6 +847,14 @@ function importBank(bankData) {
     }
     if (q.type === 'multiple' && (!Array.isArray(q.answer) || q.answer.length === 0)) {
       showToast(`第 ${i + 1} 题多选题答案应为数组`, 'error');
+      return false;
+    }
+    if (q.type === 'truefalse' && typeof q.answer !== 'boolean') {
+      showToast(`第 ${i + 1} 题判断题答案应为 true 或 false`, 'error');
+      return false;
+    }
+    if (q.type === 'fill' && (!q.answer && q.answer !== 0)) {
+      showToast(`第 ${i + 1} 题填空题缺少答案`, 'error');
       return false;
     }
   }
@@ -1478,7 +1491,7 @@ async function handleFiles(files) {
 }
 
 function parseExcelFile(file) {
-  if (typeof XLSX === "undefined") { showToast("Excel 解析库未加载，请检查网络后刷新", "error"); return; }
+  if (typeof XLSX === "undefined") { throw new Error("Excel 解析库未加载，请检查网络后刷新"); }
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = () => {
@@ -1721,15 +1734,21 @@ async function autoLoadBuiltinBank() {
     return;
   }
 
+  const btn = document.getElementById('btn-start-exam-home');
+  if (btn) { btn.disabled = true; btn.textContent = '加载题库中…'; }
+
   try {
     const resp = await fetch("builtin-bank.json");
-    if (!resp.ok) return;
+    if (!resp.ok) throw new Error('fetch failed');
     const data = await resp.json();
     if (importBank(data)) {
       localStorage.setItem("exam_app_builtin_v1", "1");
     }
   } catch(e) {
     console.log("builtin bank load failed", e);
+    if (btn) { btn.textContent = '点此重试'; }
+  } finally {
+    if (btn) btn.disabled = false;
   }
 }
 
@@ -1760,7 +1779,8 @@ function confirmExitExam() {
   quizResult = null;
   examRegistration = null;
   document.getElementById('exit-exam-modal').classList.add('hidden');
-  document.getElementById('quiz-questions-container').innerHTML = '';
+  const quizContainer = document.getElementById('quiz-questions-container');
+  if (quizContainer) quizContainer.innerHTML = '';
   if (pendingExitAction === 'records') showRecords();
   else if (pendingExitAction === 'import') openImportModal();
   else showScreen('home');
