@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#6366f1">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <title>随考 - 考试软件</title>
+  <title>2026年公司技术标准知识考试</title>
   <link rel="manifest" href="/manifest.json">
   <style>
     /* ===== Reset & Variables ===== */
@@ -296,7 +296,16 @@
     }
 
     /* ===== Toast ===== */
-    .toast-container {
+    .modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 100;
+  display: flex; align-items: center; justify-content: center;
+}
+.modal-overlay.hidden { display: none; }
+.modal-card {
+  background: var(--c-surface); border-radius: var(--radius); padding: 28px 24px;
+  max-width: 320px; width: 90%; box-shadow: var(--shadow-lg);
+}
+.toast-container {
       position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); z-index: 999;
       display: flex; flex-direction: column; gap: 8px; pointer-events: none;
     }
@@ -394,7 +403,7 @@
 <div id="app">
   <!-- Header -->
   <header class="app-header">
-    <h1>📝 随考</h1>
+    <h1 style="flex:1;text-align:center;font-size:18px;font-weight:700;color:var(--c-primary);">2026年公司技术标准知识考试</h1>
     <div class="header-actions">
       <button class="btn-icon" id="btn-records" title="考试记录">📋</button>
       <button class="btn-icon" id="btn-import" title="导入题库">＋</button>
@@ -405,22 +414,15 @@
   <!-- Main -->
   <main class="app-main">
     <!-- Home Screen -->
-    <div class="screen active" id="screen-home">
-      <div class="card" id="home-records-card" style="display:flex;align-items:center;gap:14px;padding:14px 18px;cursor:pointer;">
-        <span style="font-size:28px;">📋</span>
-        <div style="flex:1;">
-          <div style="font-size:15px;font-weight:600;">考试记录</div>
-          <div style="font-size:12px;color:var(--c-text-secondary);">查看历史考试成绩</div>
-        </div>
-        <span style="color:var(--c-text-muted);">→</span>
+    <div class="screen active" id="screen-home" style="display:flex;align-items:center;justify-content:center;">
+      <div style="text-align:center;">
+        <span style="font-size:64px;display:block;margin-bottom:16px;">⚡</span>
+        <button class="btn btn-primary" id="btn-start-exam-home" style="padding:18px 56px;font-size:20px;font-weight:700;border-radius:16px;box-shadow:0 4px 16px rgba(99,102,241,.4);">
+          开始考试
+        </button>
+        <p style="margin-top:16px;font-size:13px;color:var(--c-text-muted);">2026年公司技术标准知识考试</p>
       </div>
-      <div id="bank-list"></div>
-      <div id="empty-banks" class="empty-state hidden">
-        <span class="empty-icon">📚</span>
-        <h3>还没有题库</h3>
-        <p>点击右上角 ＋ 按钮<br>导入你的第一个题库吧</p>
-        <button class="btn btn-primary" id="btn-empty-import">导入题库</button>
-      </div>
+      <div id="bank-list" style="display:none;"></div>
     </div>
 
     <!-- Setup Screen -->
@@ -475,7 +477,7 @@
           <input type="text" id="reg-name" placeholder="请输入姓名" autocomplete="off">
         </div>
         <button class="btn btn-primary btn-block mt-8" id="btn-confirm-start">确认并开始考试</button>
-        <button class="btn btn-ghost btn-block" id="btn-back-setup">← 返回设置</button>
+        <button class="btn btn-ghost btn-block" id="btn-back-setup">← 返回首页</button>
       </div>
     </div>
 
@@ -516,6 +518,18 @@
       </div>
     </div>
   </main>
+
+
+  <div class="modal-overlay hidden" id="exit-exam-modal">
+    <div class="modal-card" style="text-align:center;">
+      <p style="font-size:18px;font-weight:600;margin-bottom:8px;">确认退出考试？</p>
+      <p style="font-size:14px;color:var(--c-text-secondary);margin-bottom:20px;">退出后当前答题进度将丢失</p>
+      <div style="display:flex;gap:10px;justify-content:center;">
+        <button class="btn btn-outline" id="btn-cancel-exit" style="min-width:100px;">继续考试</button>
+        <button class="btn btn-danger" id="btn-confirm-exit" style="min-width:100px;">确认退出</button>
+      </div>
+    </div>
+  </div>
 
   <!-- Toast Container -->
   <div class="toast-container" id="toast-container"></div>
@@ -939,6 +953,40 @@ function openSetup(bankIndex) {
 }
 
 // ===== Quiz =====
+function startExamFromHome() {
+  const banks = loadBanks();
+  if (banks.length === 0) {
+    showToast('题库尚未加载，请稍后再试', 'error');
+    return;
+  }
+  const bank = banks[0];
+  const counts = countByType(bank.questions);
+  const singleCount = 100;
+  const tfCount = 30;
+  const multiCount = 70;
+  const hasEnough = (counts.single||0) >= singleCount && (counts.truefalse||0) >= tfCount && (counts.multiple||0) >= multiCount;
+  if (!hasEnough) {
+    showToast(`题库题目不足（需单选≥100,判断≥30,多选≥70，当前单选${counts.single||0}判断${counts.truefalse||0}多选${counts.multiple||0}）`, "error");
+    return;
+  }
+  if (singleCount + tfCount + multiCount === 0) {
+    showToast('题库中没有可用题目', 'error');
+    return;
+  }
+  examRegistration = {
+    department: '',
+    name: '',
+    bankIndex: 0,
+    bankName: bank.name,
+    singleCount: singleCount,
+    tfCount: tfCount,
+    multiCount: multiCount,
+    startTime: null,
+  };
+  showScreen('register');
+  setTimeout(() => document.getElementById('reg-department').focus(), 200);
+}
+
 function startQuiz() {
   const isExam = document.getElementById("toggle-exam-mode").classList.contains("on");
   const banks = loadBanks();
@@ -1358,10 +1406,10 @@ function closeImportModal() {
 }
 
 // ===== Event Bindings =====
-document.getElementById('btn-import').addEventListener('click', openImportModal);
+document.getElementById('btn-import').addEventListener('click', () => { if (quizEngine && !quizResult) { showExitExamModal('import'); } else { openImportModal(); } });
 document.getElementById('btn-close-modal').addEventListener('click', closeImportModal);
-document.getElementById('btn-home').addEventListener('click', goHome);
-document.getElementById('btn-empty-import').addEventListener('click', openImportModal);
+document.getElementById('btn-home').addEventListener('click', () => { if (quizEngine && !quizResult) { showExitExamModal('home'); } else { goHome(); } });
+const btnEmptyImport = document.getElementById('btn-empty-import'); if (btnEmptyImport) btnEmptyImport.addEventListener('click', openImportModal);
 
 // Import modal overlay click to close
 document.getElementById('import-modal').addEventListener('click', function(e) {
@@ -1564,6 +1612,7 @@ document.getElementById('btn-import-sample').addEventListener('click', () => {
 
 // Start quiz
 document.getElementById('btn-start-quiz').addEventListener('click', startQuiz);
+document.getElementById('btn-start-exam-home').addEventListener('click', startExamFromHome);
 
 // Quiz submit
 document.getElementById('btn-submit').addEventListener('click', submitQuiz);
@@ -1576,11 +1625,11 @@ document.getElementById('btn-back-result').addEventListener('click', () => {
 
 // Registration → start exam
 document.getElementById('btn-confirm-start').addEventListener('click', startExam);
-document.getElementById('btn-back-setup').addEventListener('click', () => { showScreen('setup'); });
+document.getElementById('btn-back-setup').addEventListener('click', () => { showScreen('home'); });
 
 // Records
-document.getElementById('btn-records').addEventListener('click', showRecords);
-document.getElementById('home-records-card').addEventListener('click', showRecords);
+document.getElementById('btn-records').addEventListener('click', () => { if (quizEngine && !quizResult) { showExitExamModal('records'); } else { showRecords(); } });
+const homeRecordsCard = document.getElementById('home-records-card'); if (homeRecordsCard) homeRecordsCard.addEventListener('click', showRecords);
 document.getElementById('btn-export-records').addEventListener('click', exportRecordsCSV);
 document.getElementById("btn-clear-records").addEventListener("click", clearRecords);
 
@@ -1661,8 +1710,32 @@ function getSampleBank() {
 }
 
 // ===== Init =====
+
+// ===== Auto-load builtin question bank =====
+async function autoLoadBuiltinBank() {
+  if (localStorage.getItem("exam_app_builtin_v1")) return;
+
+  const banks = loadBanks();
+  if (banks.length > 0) {
+    localStorage.setItem("exam_app_builtin_v1", "1");
+    return;
+  }
+
+  try {
+    const resp = await fetch("builtin-bank.json");
+    if (!resp.ok) return;
+    const data = await resp.json();
+    if (importBank(data)) {
+      localStorage.setItem("exam_app_builtin_v1", "1");
+    }
+  } catch(e) {
+    console.log("builtin bank load failed", e);
+  }
+}
+
 function init() {
   renderBankList();
+  autoLoadBuiltinBank();
 
   // Register service worker for PWA / offline support
   if ('serviceWorker' in navigator) {
@@ -1670,6 +1743,31 @@ function init() {
   }
 }
 
+
+let pendingExitAction = 'home';
+
+function showExitExamModal(action) {
+  pendingExitAction = action || 'home';
+  document.getElementById('exit-exam-modal').classList.remove('hidden');
+}
+
+function hideExitExamModal() {
+  document.getElementById('exit-exam-modal').classList.add('hidden');
+}
+
+function confirmExitExam() {
+  quizEngine = null;
+  quizResult = null;
+  examRegistration = null;
+  document.getElementById('exit-exam-modal').classList.add('hidden');
+  document.getElementById('quiz-questions-container').innerHTML = '';
+  if (pendingExitAction === 'records') showRecords();
+  else if (pendingExitAction === 'import') openImportModal();
+  else showScreen('home');
+}
+
+document.getElementById('btn-cancel-exit').addEventListener('click', hideExitExamModal);
+document.getElementById('btn-confirm-exit').addEventListener('click', confirmExitExam);
 
 // Exam mode toggle
 document.getElementById("toggle-exam-mode").addEventListener("click", function() {
